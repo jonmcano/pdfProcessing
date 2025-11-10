@@ -15,7 +15,7 @@ from ibm_watsonx_ai.foundation_models import ModelInference
 load_dotenv()
 
 app = FastAPI(title="PDF Q&A API")
-app.mount("/demo", StaticFiles(directory="demo"), name="demo")
+app.mount("/demo", StaticFiles(directory="./demo"), name="demo")
 
 WATSONX_URL = os.getenv("WATSONX_URL")
 WATSONX_APIKEY = os.getenv("WATSONX_APIKEY")
