@@ -15,7 +15,7 @@ from ibm_watsonx_ai.foundation_models import ModelInference
 load_dotenv()
 
 app = FastAPI(title="PDF Q&A API")
-app.mount("/demo", StaticFiles(directory="./demo"), name="demo")
+app.mount("/", StaticFiles(directory="/static", html=True), name="static")
 
 WATSONX_URL = os.getenv("WATSONX_URL")
 WATSONX_APIKEY = os.getenv("WATSONX_APIKEY")
@@ -190,12 +190,6 @@ async def pdf_question_answer(
     answers = query_llm(pdf_text, questions_list, damage_type)
     
     return answers
-
-
-@app.get("/")
-async def root():
-    return {"PDF Q&A API"}
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))

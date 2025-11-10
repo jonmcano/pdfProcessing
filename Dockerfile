@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y build-essential libgl1-mesa-dev && rm -
 
 # Copy project metadata and code
 COPY pyproject.toml uv.lock main.py ./
+COPY static/ /static/
 
 # Install dependencies from lockfile
 RUN uv sync --frozen --no-dev
