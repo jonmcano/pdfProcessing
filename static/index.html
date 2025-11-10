@@ -314,7 +314,7 @@
                 <button class="tab" data-tab="fire">Fire</button>
             </div>
 
-            <div id="hail-wind-content" class="tab-content active">
+            <div id="hail-wind-content" class="tab-content">
                 <div class="content-placeholder">
                     <h2>Hail/Wind Content</h2>
                     <p>Content for Hail/Wind damage type will appear here.</p>
@@ -387,7 +387,7 @@
 
                 // Reset form after 2 seconds
                 setTimeout(() => {
-                    form.reset();
+                    fileInput.value = '';
                     fileInfo.style.display = 'none';
                     successMessage.style.display = 'none';
                 }, 2000);
@@ -397,6 +397,10 @@
         // Tab functionality
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
+        const hailWindCheckbox = document.getElementById('hailWind');
+        const fireCheckbox = document.getElementById('fire');
+        const hailWindTab = document.querySelector('[data-tab="hail-wind"]');
+        const fireTab = document.querySelector('[data-tab="fire"]');
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -412,6 +416,54 @@
                 document.getElementById(`${tabName}-content`).classList.add('active');
             });
         });
+
+        // Show/hide tabs based on checkbox selection
+        function updateTabVisibility() {
+            if (hailWindCheckbox.checked) {
+                hailWindTab.style.display = 'block';
+            } else {
+                hailWindTab.style.display = 'none';
+                // If this tab was active, switch to another visible tab
+                if (hailWindTab.classList.contains('active') && fireCheckbox.checked) {
+                    fireTab.click();
+                }
+            }
+
+            if (fireCheckbox.checked) {
+                fireTab.style.display = 'block';
+            } else {
+                fireTab.style.display = 'none';
+                // If this tab was active, switch to another visible tab
+                if (fireTab.classList.contains('active') && hailWindCheckbox.checked) {
+                    hailWindTab.click();
+                }
+            }
+
+            // If no checkboxes are selected, hide all tab content
+            if (!hailWindCheckbox.checked && !fireCheckbox.checked) {
+                tabContents.forEach(content => content.classList.remove('active'));
+            } else {
+                // If at least one is checked and no tab is active, activate the first visible one
+                const hasActiveTab = Array.from(tabs).some(tab => 
+                    tab.classList.contains('active') && tab.style.display !== 'none'
+                );
+                if (!hasActiveTab) {
+                    if (hailWindCheckbox.checked) {
+                        hailWindTab.click();
+                    } else if (fireCheckbox.checked) {
+                        fireTab.click();
+                    }
+                }
+            }
+        }
+
+        // Initialize tab visibility (hide all tabs initially)
+        hailWindTab.style.display = 'none';
+        fireTab.style.display = 'none';
+
+        // Listen for checkbox changes
+        hailWindCheckbox.addEventListener('change', updateTabVisibility);
+        fireCheckbox.addEventListener('change', updateTabVisibility);
     </script>
 </body>
 </html>
