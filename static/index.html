@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload with Description</title>
@@ -16,7 +16,23 @@
             background: #000000;
             min-height: 100vh;
         }
+        
+        .top-bar {
+            width: 100%;
+            background: #ffffff;
+            padding: 20px;
+            border-bottom: 3px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+        }
 
+        .logo {
+            height: 50px;
+            width: auto;
+            margin-left: 20px;
+        }
+
+        
         .page-container {
             display: flex;
             min-height: 100vh;
@@ -24,12 +40,12 @@
 
         .left-panel {
             width: 20%;
-            background: #000000;
+            background: #FFFFFF;
             padding: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: 1px solid #333333;
+            border-right: 3px solid #333333;
         }
 
         .right-panel {
@@ -66,6 +82,11 @@
             font-weight: 600;
             font-size: 14px;
         }
+        
+        progress {
+            min-width: 100%;
+        }
+
 
         input[type="text"],
         textarea {
@@ -300,17 +321,24 @@
             color: #ffffff;
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 30px;
+            margin-bottom: 30px;vertical-align:top;
             text-align: center;
         }
     </style>
 </head>
 <body>
+    <div class="top-bar">
+        <img src="lexxari_primary_black_white.png" alt="Lexxari Logo" class="logo">
+    </div>
+
     <div class="page-container">
         <!-- Left Panel (30%) -->
         <div class="left-panel">
-            <div style="width: 100%; max-width: 500px;">
-                <h1 class="page-title">Lexxari</h1>
+            <div style="width: 100%; max-width: 500px; vertical-align:top;">
+                <div class="container">
+                    <label>Status</label><br>
+                    <progress id="smartsheet_progress" max="100" value="0"></progress>
+                </div>
                 <div class="container">
                 <form id="uploadForm">
                     <div class="form-group">
@@ -353,9 +381,13 @@
 
         <!-- Right Panel (70%) -->
         <div class="right-panel">
+            <div class="top-bar">
+                <img src="lexxari_primary_white_black.png" alt="Smartsheet Logo" class="logo">
+                <h3>Smart Sheet</h3>
+            </div>
             <div class="tabs-container">
-                <button class="tab active" data-tab="hail-wind">Hail/Wind</button>
-                <button class="tab" data-tab="fire">Fire</button>
+                <button class="tab active" data-tab="hail-wind" id="hail-wind-tab" >Hail/Wind</button>
+                <button class="tab" data-tab="fire" id="fire-tab">Fire</button>
             </div>
 
             <div id="hail-wind-content" class="tab-content">
@@ -422,7 +454,11 @@
                 alert('Please select at least one damage type');
                 return;
             }
-
+            
+            var progress_step = 90;
+            if (hailWind && fire)
+                progress_step = 45;
+            
             // Simulate upload process
             submitBtn.disabled = true;
             submitBtn.textContent = 'Uploading...';
@@ -434,30 +470,24 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Upload Policy';
                          
-                // ********************************
-                // CUSTOM CODE TO KEEP
-                //*********************************
                 if (hailWind) {              
                   fetch("hail_wind.json")
                     .then(response => response.json())
-                    .then(json => loadSmartSheet(json, file));
+                    .then(json => loadSmartSheet(json, file, progress_step));
                 }
-
+ 
                 if (fire) {              
                   fetch("fire.json")
                     .then(response => response.json())
-                    .then(json => loadSmartSheet(json, file));
+                    .then(json => loadSmartSheet(json, file, progress_step));
                 }
-                // ********************************
-                // CUSTOM CODE TO KEEP
-                //*********************************
 
                 // Reset form after 2 seconds
-                //  setTimeout(() => {
-                //      fileInput.value = '';
-                //      fileInfo.style.display = 'none';
-                //      successMessage.style.display = 'none';
-                //  }, 2000);
+                // setTimeout(() => {
+                //    fileInput.value = '';
+                //    fileInfo.style.display = 'none';
+                //    successMessage.style.display = 'none';
+                // }, 2000);
             }, 1500);
         });
 
@@ -537,7 +567,10 @@
         // CUSTOM CODE TO KEEP
         //*********************************
         
-        function loadSmartSheet(json, file) {
+        function loadSmartSheet(json, file, progress_step) {
+          if (document.getElementById('smartsheet_progress').value == 0) 
+            document.getElementById('smartsheet_progress').value = 10;
+
           const form = new FormData();
             form.append('pdf_file', file);
             form.append('questions', JSON.stringify(json));
@@ -554,8 +587,9 @@
             const answers = await rawResponse.json();
             var arrayLength = answers.length;
             
-            var tableId="hailTable";
-            if (json.damage_type == "FIRE")
+            if (json.damage_type == "HAIL/WIND")
+                tableId="hailTable";
+            else if (json.damage_type == "FIRE")
                 tableId="fireTable";
                 
             var currentTable = document.getElementById(tableId);
@@ -579,9 +613,17 @@
              }
              
              currentTable.parentNode.replaceChild(new_tbody, currentTable)
+             
+             document.getElementById('smartsheet_progress').value = document.getElementById('smartsheet_progress').value + progress_step;
+
+             if (json.damage_type == "HAIL/WIND")
+                document.getElementById('hail-wind-tab').click();
+             else if (json.damage_type == "FIRE")
+                document.getElementById('fire-tab').click();
             
           })();
         }
+        
         // ********************************
         // CUSTOM CODE TO KEEP
         //*********************************
