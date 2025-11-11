@@ -252,6 +252,50 @@
             color: #666;
         }
 
+        .qa-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .qa-table th,
+        .qa-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .qa-table th {
+            background: #000000;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .qa-table td {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .qa-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .qa-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .question-cell {
+            font-weight: 600;
+            width: 40%;
+        }
+
+        .answer-cell {
+            width: 60%;
+        }
+
         .page-title {
             color: #ffffff;
             font-size: 24px;
@@ -315,17 +359,29 @@
             </div>
 
             <div id="hail-wind-content" class="tab-content">
-                <div class="content-placeholder">
-                    <h2>Hail/Wind Content</h2>
-                    <p>Content for Hail/Wind damage type will appear here.</p>
-                </div>
+                <table class="qa-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hailTable">
+                    </tbody>
+                </table>
             </div>
 
             <div id="fire-content" class="tab-content">
-                <div class="content-placeholder">
-                    <h2>Fire Content</h2>
-                    <p>Content for Fire damage type will appear here.</p>
-                </div>
+                <table class="qa-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fireTable">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -377,14 +433,24 @@
                 successMessage.style.display = 'block';
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Upload Policy';
-                
-                
-                // Log the data (in a real app, this would be sent to a server)
-                console.log('File:', file);
-                console.log('Damage Types:', {
-                    hailWind: hailWind,
-                    fire: fire
-                });
+                         
+                // ********************************
+                // CUSTOM CODE TO KEEP
+                //*********************************
+                if (hailWind) {              
+                  fetch("hail_wind.json")
+                    .then(response => response.json())
+                    .then(json => loadSmartSheet(json, file));
+                }
+
+                if (fire) {              
+                  fetch("fire.json")
+                    .then(response => response.json())
+                    .then(json => loadSmartSheet(json, file));
+                }
+                // ********************************
+                // CUSTOM CODE TO KEEP
+                //*********************************
 
                 // Reset form after 2 seconds
                 setTimeout(() => {
@@ -465,6 +531,61 @@
         // Listen for checkbox changes
         hailWindCheckbox.addEventListener('change', updateTabVisibility);
         fireCheckbox.addEventListener('change', updateTabVisibility);
+        
+        
+        // ********************************
+        // CUSTOM CODE TO KEEP
+        //*********************************
+        
+        function loadSmartSheet(json, file) {
+          const form = new FormData();
+            form.append('pdf_file', file);
+            form.append('questions', JSON.stringify(json));
+
+          (async () => {
+            const rawResponse = await fetch('/api/pdf-qa', {
+              method: 'POST',
+              headers: {
+                'accept': 'application/json'
+              },
+              body: form
+            });
+            
+            const answers = await rawResponse.json();
+            var arrayLength = answers.length;
+            
+            var tableId="hailTable";
+            if (json.damage_type == "FIRE")
+                tableId="fireTable";
+                
+            var currentTable = document.getElementById(tableId);
+            var new_tbody = document.createElement('tbody');
+            new_tbody.id = tableId;
+            
+            for (var i = 0; i < arrayLength; i++) {
+                var row = document.createElement("tr");
+                
+                var columnQ = document.createElement("td");
+                columnQ.classList.add("question-cell");
+                columnQ.textContent = answers[i].question;
+                row.appendChild(columnQ);
+                
+                var columnA = document.createElement("td");
+                columnA.classList.add("answer-cell");
+                columnA.textContent = answers[i].answer;
+                row.appendChild(columnA);
+               
+                new_tbody.appendChild(row);
+             }
+             
+             currentTable.parentNode.replaceChild(new_tbody, currentTable)
+            
+          })();
+        }
+        // ********************************
+        // CUSTOM CODE TO KEEP
+        //*********************************
+
     </script>
 </body>
 </html>
