@@ -49,11 +49,17 @@
         }
 
         .right-panel {
-            width: 80%;
+            width: 60%;
             background: #ffffff;
             padding: 20px;
         }
-
+        
+        .chat-panel {
+            width: 20%;
+            background: #FFFFFF;
+            border-left: 3px solid #333333;
+        }
+        
         .container {
             background: white;
             border-radius: 16px;
@@ -73,6 +79,12 @@
 
         .form-group {
             margin-bottom: 25px;
+        }
+        
+        .chat-logo {
+            width: 100%; /* or any custom size */
+            height: 100%; 
+            object-fit: contain;
         }
 
         label {
@@ -332,7 +344,7 @@
     </div>
 
     <div class="page-container">
-        <!-- Left Panel (30%) -->
+        <!-- Left Panel (20%) -->
         <div class="left-panel">
             <div style="width: 100%; max-width: 500px; vertical-align:top;">
                 <div class="container">
@@ -379,7 +391,7 @@
             </div>
         </div>
 
-        <!-- Right Panel (70%) -->
+        <!-- Right Panel (60%) -->
         <div class="right-panel">
             <div class="top-bar">
                 <img src="lexxari_primary_white_black.png" alt="Smartsheet Logo" class="logo">
@@ -416,8 +428,35 @@
                 </table>
             </div>
         </div>
+        <!-- Chat Panel (20%) -->
+        <div class="chat-panel" id="demo_chat">
+        
+        </div>
     </div>
 
+    <script>
+		  window.watsonAssistantChatOptions = {
+          integrationID: "a3c3dbec-b0ec-4bff-b56d-91cb305ee049", // The ID of this integration.
+          region: "wxo-us-south", // The region your integration is hosted in.
+          serviceInstanceID: "372cf169-2ff3-4d53-a1df-911b55250d50", // The ID of your service instance.
+  			    element: demo_chat,
+			    themeConfig: {
+			      corners: 'square',
+			    },
+			    layout: {
+			      showFrame: false,
+			      hasContentMaxWidth: true,
+			    },
+			    onLoad: async (instance) => { 
+			      await instance.render();
+			    }
+		  };
+		  setTimeout(function(){
+		    const t=document.createElement('script');
+		    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+		    document.head.appendChild(t);
+		  });
+		</script>
     <script>
         const form = document.getElementById('uploadForm');
         const fileInput = document.getElementById('fileInput');
