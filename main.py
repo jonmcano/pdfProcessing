@@ -131,29 +131,57 @@ Example format:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error querying LLM: {str(e)}")
 
-
-@app.post("/api/pdf-qa", response_model=List[Answer])
-async def pdf_question_answer(
-    pdf_file: UploadFile = File(...),
-    questions: str = File(...)
-):
+@app.post("/api/upload")
+async def upload_file(pdf_file: UploadFile = File(...)):
     """
-    Upload a PDF file and questions to get answers.
+    Upload PDF file to act as source for demo
     
     Parameters:
-    - pdf_file: PDF document to analyze
+    - pdf_file: File to be used as source for all RAG
+    
+    Returns:
+    - JSON {msg: 'Success'} 
+    """
+
+    try:
+        # Check if a file is uploaded
+        if not pdf_file:
+            raise HTTPException(status_code=400, detail="No file part in the request")
+        
+        print("Received Filename:", pdf_file.filename)
+        
+        # Validate PDF file
+        if not pdf_file.filename.endswith('.pdf'):
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        # Read PDF file
+        pdf_content = await pdf_file.read()
+        
+        # Store the raw file and the contents in case needed later
+        app.state.pdf_file = pdf_file
+        app.state.pdf_content = pdf_content
+
+        return JSONResponse(content={"msg": f"File '{pdf_file.filename}' uploaded and processed successfully", "success": True})
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"File upload failed. Error: {str(e)}")        
+
+@app.post("/api/pdf-qa", response_model=List[Answer])
+async def pdf_question_answer(questions: str = File(...)):
+    """
+    Upload questions to get answers.
+    
+    Parameters:
     - questions: JSON string containing array of questions or object with 'questions' array
     
     Returns:
     - JSON array of question-answer pairs
     """
+    pdf_content = app.state.pdf_content
     
     # Validate PDF file
-    if not pdf_file.filename.endswith('.pdf'):
-        raise HTTPException(status_code=400, detail="File must be a PDF")
-    
-    # Read PDF file
-    pdf_content = await pdf_file.read()
+    if not pdf_content:
+        raise HTTPException(status_code=400, detail="You did not select a policy yet")
     
     # Parse questions JSON
     try:

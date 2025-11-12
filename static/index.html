@@ -509,26 +509,43 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Upload Policy';
                 
-                
-                         
-                if (hailWind) {              
-                  fetch("hail_wind.json")
-                    .then(response => response.json())
-                    .then(json => loadSmartSheet(json, file, progress_step));
-                }
- 
-                if (fire) {              
-                  fetch("fire.json")
-                    .then(response => response.json())
-                    .then(json => loadSmartSheet(json, file, progress_step));
-                }
+              if (document.getElementById('smartsheet_progress').value == 0) 
+                document.getElementById('smartsheet_progress').value = 10;
 
-                // Reset form after 2 seconds
-                // setTimeout(() => {
-                //    fileInput.value = '';
-                //    fileInfo.style.display = 'none';
-                //    successMessage.style.display = 'none';
-                // }, 2000);
+              const form = new FormData();
+                form.append('pdf_file', file);
+
+              (async () => {
+                const rawResponse = await fetch('/api/upload', {
+                  method: 'POST',
+                  headers: {
+                    'accept': 'application/json'
+                  },
+                  body: form
+                });
+                
+                const upload_response = await rawResponse.json();
+                if (upload_response) {
+                  if (hailWind) {              
+                    fetch("hail_wind.json")
+                      .then(response => response.json())
+                      .then(json => loadSmartSheet(json, progress_step));
+                  }
+   
+                  if (fire) {              
+                    fetch("fire.json")
+                      .then(response => response.json())
+                      .then(json => loadSmartSheet(json, progress_step));
+                  }
+
+                  // Reset form after 2 seconds
+                  // setTimeout(() => {
+                  //    fileInput.value = '';
+                  //    fileInfo.style.display = 'none';
+                  //    successMessage.style.display = 'none';
+                  // }, 2000);
+                }
+              })();
             }, 1500);
         });
 
@@ -608,12 +625,8 @@
         // CUSTOM CODE TO KEEP
         //*********************************
         
-        function loadSmartSheet(json, file, progress_step) {
-          if (document.getElementById('smartsheet_progress').value == 0) 
-            document.getElementById('smartsheet_progress').value = 10;
-
+        function loadSmartSheet(json, progress_step) {
           const form = new FormData();
-            form.append('pdf_file', file);
             form.append('questions', JSON.stringify(json));
 
           (async () => {
