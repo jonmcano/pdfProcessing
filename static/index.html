@@ -3,7 +3,7 @@
 <head>   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload with Description</title>
+    <title>Lexxari</title>
     <style>
         * {
             margin: 0;
@@ -98,9 +98,13 @@
             font-weight: 600;
             font-size: 14px;
         }
-        
+
+        progress::-moz-progress-bar { background: black; }
+        progress::-webkit-progress-value { background: black; }
         progress {
             min-width: 100%;
+            height: 20px;
+            color: black
         }
 
 
@@ -340,6 +344,7 @@
             margin-bottom: 30px;vertical-align:top;
             text-align: center;
         }
+        
         .chat-header {
             background: #ffffff;
             color: #000000;
@@ -360,15 +365,6 @@
             height: 30px;
         }
 
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -376,6 +372,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            height: 600px;
         }
 
         .message {
@@ -443,6 +440,8 @@
             padding: 1rem 1.5rem;
             background: white;
             border-top: 1px solid #e5e7eb;
+            position: sticky;
+            bottom: 0;
         }
 
         .chat-input-wrapper {
@@ -467,26 +466,9 @@
         }
 
         .send-button {
-            padding: 0.75rem 1.5rem;
-            background: #000000;
-            color: white;
-            border: none;
-            border-radius: 1.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
             width: 25%;
         }
 
-        .send-button:hover {
-            background: #333333;
-        }
-
-        .send-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-        
     </style>
 </head>
 <body>
@@ -503,42 +485,42 @@
                     <progress id="smartsheet_progress" max="100" value="0"></progress>
                 </div>
                 <div class="container">
-                <form id="uploadForm">
-                    <div class="form-group">
-                        <label>Damage Type *</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="damageType" value="hail-wind" id="hailWind">
-                                <span>Hail/Wind</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="damageType" value="fire" id="fire">
-                                <span>Fire</span>
-                            </label>
-                        </div>
-                    </div>
+                  <form id="uploadForm">
+                      <div class="form-group">
+                          <label>Damage Type *</label>
+                          <div class="checkbox-group">
+                              <label class="checkbox-label">
+                                  <input type="checkbox" name="damageType" value="hail-wind" id="hailWind">
+                                  <span>Hail/Wind</span>
+                              </label>
+                              <label class="checkbox-label">
+                                  <input type="checkbox" name="damageType" value="fire" id="fire">
+                                  <span>Fire</span>
+                              </label>
+                          </div>
+                      </div>
 
-                    <div class="form-group">
-                        <label>Select File *</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="fileInput" name="file" required>
-                            <label for="fileInput" class="file-input-label">
-                                <div>
-                                    <div class="upload-icon">📁</div>
-                                    <div>Click to select a file</div>
-                                </div>
-                            </label>
-                        </div>
-                        <div id="fileInfo" class="file-info" style="display: none;"></div>
-                    </div>
+                      <div class="form-group">
+                          <label>Select File *</label>
+                          <div class="file-input-wrapper">
+                              <input type="file" id="fileInput" name="file" required>
+                              <label for="fileInput" class="file-input-label">
+                                  <div>
+                                      <div class="upload-icon">📁</div>
+                                      <div>Click to select a file</div>
+                                  </div>
+                              </label>
+                          </div>
+                          <div id="fileInfo" class="file-info" style="display: none;"></div>
+                      </div>
 
-                    <button type="submit" id="submitBtn">Upload Policy</button>
-                </form>
+                      <button type="submit" id="submitBtn">Upload Policy</button>
+                  </form>
 
-                <div id="successMessage" class="success-message">
-                    ✅ File uploaded successfully!
-                </div>
-            </div>
+                  <div id="successMessage" class="success-message">
+                      ✅ File uploaded successfully!
+                  </div>
+              </div>
             </div>
         </div>
 
@@ -590,7 +572,7 @@
           <div id="demo_chat" class="demo-chat" >
             <div class="chat-messages" id="messages">
                 <div class="message bot">
-                    <div class="message-avatar">AI</div>
+                    <div class="message-avatar">L</div>
                     <div class="message-content">Hello! How can I help you today?</div>
                 </div>
             </div>
@@ -840,7 +822,7 @@
             
             const avatar = document.createElement('div');
             avatar.className = 'message-avatar';
-            avatar.textContent = isUser ? 'U' : 'AI';
+            avatar.textContent = isUser ? 'U' : 'L';
             
             const content = document.createElement('div');
             content.className = 'message-content';
@@ -854,23 +836,27 @@
         }
 
         function sendMessage() {
-            const text = messageInput.value.trim();
+            var text = messageInput.value.trim();
             if (!text) return;
             
             addMessage(text, true);
-            messageInput.value = '';
             
-            setTimeout(() => {
-                const responses = [
-                    "That's interesting! Tell me more.",
-                    "I understand. How can I assist you further?",
-                    "Thanks for sharing that with me.",
-                    "Got it! What else would you like to know?",
-                    "I'm here to help. What's your next question?"
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                addMessage(randomResponse, false);
-            }, 500);
+            var chatQuestions = { questions: [] };
+            chatQuestions.questions.push(text);
+
+            var chatForm = new FormData();
+            chatForm.append('questions', JSON.stringify(chatQuestions));
+
+            messageInput.value = '';
+                        
+            fetch('/api/pdf-qa', {
+              method: 'POST',
+              headers: { 'accept': 'application/json' },
+              body: chatForm
+            })
+            .then(response => response.json())
+            .then(chatAnswers => addMessage(chatAnswers[0].answer, false));
+            
         }
 
         sendButton.addEventListener('click', sendMessage);
@@ -884,4 +870,4 @@
         messageInput.focus();
     </script>
 </body>
-</html>demo_chat
+</html>
