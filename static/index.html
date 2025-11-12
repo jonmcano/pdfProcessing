@@ -49,15 +49,19 @@
         }
 
         .right-panel {
-            width: 60%;
+            width: 50%;
             background: #ffffff;
             padding: 20px;
         }
         
         .chat-panel {
-            width: 20%;
+            width: 30%;
             background: #FFFFFF;
             border-left: 3px solid #333333;
+        }
+        
+        .demo-chat {
+            display: none;
         }
         
         .container {
@@ -336,6 +340,153 @@
             margin-bottom: 30px;vertical-align:top;
             text-align: center;
         }
+        .chat-header {
+            background: #ffffff;
+            color: #000000;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chat-header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 70%;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #000000;
+        }
+
+        .message.bot .message-avatar {
+            background: #666666;
+        }
+
+        .message-content {
+            background: #f5f5f5;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: #000000;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .message.bot .message-content {
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-input-container {
+            padding: 1rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 1.5rem;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #000000;
+        }
+
+        .send-button {
+            padding: 0.75rem 1.5rem;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 25%;
+        }
+
+        .send-button:hover {
+            background: #333333;
+        }
+
+        .send-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
     </style>
 </head>
 <body>
@@ -391,7 +542,7 @@
             </div>
         </div>
 
-        <!-- Right Panel (60%) -->
+        <!-- Right Panel (50%) -->
         <div class="right-panel">
             <div class="top-bar">
                 <img src="lexxari_primary_white_black.png" alt="Smartsheet Logo" class="logo">
@@ -428,35 +579,38 @@
                 </table>
             </div>
         </div>
-        <!-- Chat Panel (20%) -->
-        <div class="chat-panel" id="demo_chat">
-        
+        <!-- Chat Panel (30%) -->
+        <div class="chat-panel">
+          <div class="chat-header">
+              <h1>
+                  <img src="lexxari_black_transparent.png" alt="Lexxari Logo" class="logo-icon">
+                  Lexxari
+              </h1>
+          </div>
+          <div id="demo_chat" class="demo-chat" >
+            <div class="chat-messages" id="messages">
+                <div class="message bot">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">Hello! How can I help you today?</div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="messageInput" 
+                        placeholder="Type a message..."
+                        autocomplete="off"
+                    >
+                    <button class="send-button" id="sendButton">Send</button>
+                </div>
+            </div>
+          </div>
         </div>
     </div>
 
-    <script>
-		  window.watsonAssistantChatOptions = {
-          integrationID: "a3c3dbec-b0ec-4bff-b56d-91cb305ee049", // The ID of this integration.
-          region: "wxo-us-south", // The region your integration is hosted in.
-          serviceInstanceID: "372cf169-2ff3-4d53-a1df-911b55250d50", // The ID of your service instance.
-  			    element: demo_chat,
-			    themeConfig: {
-			      corners: 'square',
-			    },
-			    layout: {
-			      showFrame: false,
-			      hasContentMaxWidth: true,
-			    },
-			    onLoad: async (instance) => { 
-			      await instance.render();
-			    }
-		  };
-		  setTimeout(function(){
-		    const t=document.createElement('script');
-		    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
-		    document.head.appendChild(t);
-		  });
-		</script>
     <script>
         const form = document.getElementById('uploadForm');
         const fileInput = document.getElementById('fileInput');
@@ -526,6 +680,9 @@
                 
                 const upload_response = await rawResponse.json();
                 if (upload_response) {
+                  //  Show chat
+                  document.getElementById('demo_chat').style.display = 'block';
+                
                   if (hailWind) {              
                     fetch("hail_wind.json")
                       .then(response => response.json())
@@ -619,12 +776,7 @@
         // Listen for checkbox changes
         hailWindCheckbox.addEventListener('change', updateTabVisibility);
         fireCheckbox.addEventListener('change', updateTabVisibility);
-        
-        
-        // ********************************
-        // CUSTOM CODE TO KEEP
-        //*********************************
-        
+
         function loadSmartSheet(json, progress_step) {
           const form = new FormData();
             form.append('questions', JSON.stringify(json));
@@ -677,11 +829,59 @@
             
           })();
         }
-                
-        // ********************************
-        // CUSTOM CODE TO KEEP
-        //*********************************
 
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        function addMessage(text, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = isUser ? 'U' : 'AI';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.textContent = text;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            messagesContainer.appendChild(messageDiv);
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            
+            addMessage(text, true);
+            messageInput.value = '';
+            
+            setTimeout(() => {
+                const responses = [
+                    "That's interesting! Tell me more.",
+                    "I understand. How can I assist you further?",
+                    "Thanks for sharing that with me.",
+                    "Got it! What else would you like to know?",
+                    "I'm here to help. What's your next question?"
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, false);
+            }, 500);
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        messageInput.focus();
     </script>
 </body>
-</html>
+</html>demo_chat
