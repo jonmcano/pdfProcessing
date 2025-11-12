@@ -99,12 +99,9 @@
             font-size: 14px;
         }
 
-        progress::-moz-progress-bar { background: black; }
-        progress::-webkit-progress-value { background: black; }
         progress {
             min-width: 100%;
             height: 20px;
-            color: black
         }
 
 
@@ -833,6 +830,8 @@
             messagesContainer.appendChild(messageDiv);
             
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            sendButton.disabled = false;             
         }
 
         function sendMessage() {
@@ -841,6 +840,7 @@
             
             addMessage(text, true);
             
+            sendButton.disabled = true;             
             var chatQuestions = { questions: [] };
             chatQuestions.questions.push(text);
 
@@ -848,7 +848,7 @@
             chatForm.append('questions', JSON.stringify(chatQuestions));
 
             messageInput.value = '';
-                        
+            
             fetch('/api/pdf-qa', {
               method: 'POST',
               headers: { 'accept': 'application/json' },
