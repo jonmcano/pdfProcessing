@@ -98,12 +98,6 @@
             font-size: 14px;
         }
 
-        progress {
-            min-width: 100%;
-            height: 20px;
-        }
-
-
         input[type="text"],
         textarea {
             width: 100%;
@@ -464,6 +458,27 @@
         .send-button {
             width: 25%;
         }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 25px;
+            overflow: hidden;
+            height: 30px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #000000;
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
 
     </style>
 </head>
@@ -478,7 +493,7 @@
             <div style="width: 100%; max-width: 500px; vertical-align:top;">
                 <div class="container">
                     <label>Status</label><br>
-                    <progress id="smartsheet_progress" max="100" value="0"></progress>
+                    <div class="progress-bar" id="progressBar">0%</div>
                 </div>
                 <div class="container">
                   <form id="uploadForm">
@@ -626,9 +641,9 @@
                 return;
             }
             
-            var progress_step = 90;
+            var progress_step = 80;
             if (hailWind && fire)
-                progress_step = 45;
+                progress_step = 40;
             
             // Simulate upload process
             submitBtn.disabled = true;
@@ -641,8 +656,7 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Upload Policy';
                 
-              if (document.getElementById('smartsheet_progress').value == 0) 
-                document.getElementById('smartsheet_progress').value = 10;
+              setProgress(20);
 
               const form = new FormData();
                 form.append('pdf_file', file);
@@ -798,7 +812,7 @@
              
              currentTable.parentNode.replaceChild(new_tbody, currentTable)
              
-             document.getElementById('smartsheet_progress').value = document.getElementById('smartsheet_progress').value + progress_step;
+             setProgress(getProgress()+progress_step);
 
              if (json.damage_type == "HAIL/WIND")
                 document.getElementById('hail-wind-tab').click();
@@ -807,7 +821,21 @@
             
           })();
         }
+        
+        function setProgress(percentage) {
+            // Ensure percentage is between 0 and 100
+            percentage = Math.max(0, Math.min(100, percentage));
+            
+            
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+        }
 
+        function getProgress() {
+            return parseFloat(progressBar.style.width);
+        }
+
+        const progressBar = document.getElementById('progressBar');
         const messagesContainer = document.getElementById('messages');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
