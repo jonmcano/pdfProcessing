@@ -16,6 +16,7 @@ load_dotenv()
 
 app = FastAPI(title="PDF Q&A API")
 app.mount("/demo", StaticFiles(directory="/static", html=True), name="demo")
+app.mount("/auto", StaticFiles(directory="/static", html=True), name="auto")
 
 WATSONX_URL = os.getenv("WATSONX_URL")
 WATSONX_APIKEY = os.getenv("WATSONX_APIKEY")

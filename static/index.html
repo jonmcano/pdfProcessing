@@ -322,7 +322,6 @@
             font-weight: 600;
             width: 40%;
         }
-
         .answer-cell {
             width: 60%;
         }
@@ -491,13 +490,14 @@
         <!-- Left Panel (20%) -->
         <div class="left-panel">
             <div style="width: 100%; max-width: 500px; vertical-align:top;">
+                <div class="container" id="policy-details" style="font-size: 16px;"></div>
                 <div class="container">
                     <label>Status</label><br>
                     <div class="progress-bar" id="progressBar">0%</div>
                 </div>
                 <div class="container">
                   <form id="uploadForm">
-                      <div class="form-group">
+                      <div class="form-group" id="damage-type">
                           <label>Damage Type *</label>
                           <div class="checkbox-group">
                               <label class="checkbox-label">
@@ -544,6 +544,7 @@
             <div class="tabs-container">
                 <button class="tab active" data-tab="hail-wind" id="hail-wind-tab" >Hail/Wind</button>
                 <button class="tab" data-tab="fire" id="fire-tab">Fire</button>
+                <button class="tab" data-tab="auto" id="auto-tab">Auto</button>
             </div>
 
             <div id="hail-wind-content" class="tab-content">
@@ -568,6 +569,19 @@
                         </tr>
                     </thead>
                     <tbody id="fireTable">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="auto-content" class="tab-content">
+                <table class="qa-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="autoTable">
                     </tbody>
                 </table>
             </div>
@@ -629,21 +643,31 @@
             
             const hailWind = document.getElementById('hailWind').checked;
             const fire = document.getElementById('fire').checked;
+            const auto = isAuto();
             const file = fileInput.files[0];
+            
+            var url = window.location.href;
+            var lastPart = url.substr(url.lastIndexOf('/') + 1);
 
             if (!file) {
                 alert('Please select a file');
                 return;
             }
-
-            if (!hailWind && !fire) {
-                alert('Please select at least one damage type');
-                return;
-            }
             
+            var url = window.location.href;
+            var lastPart = url.substr(url.lastIndexOf('/') + 1);
+
             var progress_step = 80;
-            if (hailWind && fire)
-                progress_step = 40;
+            if (!auto) {
+
+              if (!hailWind && !fire) {
+                  alert('Please select at least one damage type');
+                  return;
+              }
+              
+              if (hailWind && fire)
+                  progress_step = 40;
+            }
             
             // Simulate upload process
             submitBtn.disabled = true;
@@ -674,6 +698,11 @@
                 if (upload_response) {
                   //  Show chat
                   document.getElementById('demo_chat').style.display = 'block';
+                  
+                  fetch("policy_details.json")
+                    .then(response => response.json())
+                    .then(json => loadPolicyDetails(json));
+                  
                 
                   if (hailWind) {              
                     fetch("hail_wind.json")
@@ -685,6 +714,12 @@
                     fetch("fire.json")
                       .then(response => response.json())
                       .then(json => loadSmartSheet(json, progress_step));
+                  }
+                  
+                  if (auto) {
+                    fetch("auto.json")
+                      .then(response => response.json())
+                      .then(json => loadSmartSheet(json, progress_step));                  
                   }
 
                   // Reset form after 2 seconds
@@ -705,6 +740,8 @@
         const fireCheckbox = document.getElementById('fire');
         const hailWindTab = document.querySelector('[data-tab="hail-wind"]');
         const fireTab = document.querySelector('[data-tab="fire"]');
+        const autoTab = document.querySelector('[data-tab="auto"]');
+        const damageType =  document.getElementById('damage-type');
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -764,10 +801,36 @@
         // Initialize tab visibility (hide all tabs initially)
         hailWindTab.style.display = 'none';
         fireTab.style.display = 'none';
+        autoTab.style.display = 'none';
 
         // Listen for checkbox changes
         hailWindCheckbox.addEventListener('change', updateTabVisibility);
         fireCheckbox.addEventListener('change', updateTabVisibility);
+        
+        function loadPolicyDetails(json) {
+          const form = new FormData();
+          form.append('questions', JSON.stringify(json));
+          (async () => {
+            var rawResponse = await fetch('/api/pdf-qa', {
+              method: 'POST',
+              headers: {
+                'accept': 'application/json'
+              },
+              body: form
+            });
+            
+            var answers = await rawResponse.json();
+   
+            var policyDetails = document.getElementById("policy-details");
+            policyDetails.innerHTML = `
+                    <table><tr><td><strong>Policy Holder:</strong><br>${answers[0].answer}</td></tr>
+                    <tr><td><strong>Policy Address:</strong><br>${answers[1].answer}</td></tr>
+                    <tr><td><strong>Policy Number:</strong><br>${answers[2].answer}</td></tr>
+                    <tr><td><strong>Policy Period:</strong><br>${answers[3].answer}</td></tr></table>
+            `;
+          
+          })();
+        }
 
         function loadSmartSheet(json, progress_step) {
           const form = new FormData();
@@ -789,6 +852,8 @@
                 tableId="hailTable";
             else if (json.damage_type == "FIRE")
                 tableId="fireTable";
+            else if (json.damage_type == "AUTO")
+                tableId="autoTable";
                 
             var currentTable = document.getElementById(tableId);
             var new_tbody = document.createElement('tbody');
@@ -818,6 +883,8 @@
                 document.getElementById('hail-wind-tab').click();
              else if (json.damage_type == "FIRE")
                 document.getElementById('fire-tab').click();
+             else if (json.damage_type == "AUTO")
+                document.getElementById('auto-tab').click();
             
           })();
         }
@@ -895,6 +962,30 @@
         });
 
         messageInput.focus();
+        
+        function isAuto() {
+            var url = window.location.href;
+            var lastPart = url.substr(url.lastIndexOf('/') + 1);
+            if (lastPart == "") {
+               lastPart = url.substr(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, 4);
+            } 
+            if (lastPart === "auto")
+              return true;
+              
+            return false;
+        }
+        
+        window.onload = function() { 
+
+            if (isAuto()) {
+              autoTab.style.display = 'block';
+              damageType.style.display = 'none';
+            }  else {
+              autoTab.style.display = 'none';
+              damageType.style.display = 'block';            
+            }
+          
+        }
     </script>
 </body>
 </html>
