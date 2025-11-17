@@ -1,0 +1,8 @@
+{
+   "damage_type":"AUTO",
+   "questions":[
+	"Does the policy exclude coverage due to the driver’s conduct (e.g., DUI, intentional acts, or criminal activity)?",
+	"Does the policy exclude coverage based on the use of the vehicle for rideshare, delivery, or commercial purposes?",
+	"Does the policy contain an 'other insurance' clause that affects coverage priority for this loss?"
+   ]
+}

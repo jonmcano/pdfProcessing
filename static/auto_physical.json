@@ -1,0 +1,9 @@
+{
+   "damage_type":"AUTO",
+   "questions":[
+	"Is collision or comprehensive coverage active for the vehicle at the time of this loss?",
+	"Is coverage for aftermarket parts, custom equipment, or vehicle modifications included under the policy?",
+	"Is a deductible required for this type of physical damage claim, and is the amount specified in the policy?",
+	"Does the policy state that settlement must be based on actual cash value (ACV) for this loss?"
+   ]
+}

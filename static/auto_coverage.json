@@ -1,0 +1,9 @@
+{
+   "damage_type":"AUTO",
+   "questions":[
+	"Does the policy identify the claimant as an insured at the time of the loss?",
+	"Is the vehicle involved in the loss listed on the declarations page?",
+	"Is the driver at the time of the accident covered under the policy (listed driver or permissive user)?",
+	"Did the loss occur within the active policy period and within the policy’s covered territory?"
+   ]
+}

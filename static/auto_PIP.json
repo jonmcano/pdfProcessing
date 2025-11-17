@@ -1,0 +1,7 @@
+{
+   "damage_type":"AUTO",
+   "questions":[
+	"Is the claimant eligible for PIP or Medical Payments benefits under the policy definitions?",
+	"Does the policy contain any PIP/MedPay exclusions that apply to the claimant or vehicle in this loss?"
+   ]
+}

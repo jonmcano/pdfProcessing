@@ -1,0 +1,9 @@
+{
+   "damage_type":"AUTO",
+   "questions":[
+	"Does the liability section of the policy apply to this type of accident?",
+	"Does any exclusion in the liability section apply to the driver, vehicle, or circumstances of this loss?",
+	"Are the applicable liability limits clearly defined for bodily injury and property damage in this claim?",
+	"Does the policy extend liability coverage to this loss under non-owned or temporary substitute vehicle provisions?"
+   ]
+}

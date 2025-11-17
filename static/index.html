@@ -204,6 +204,80 @@
                       </tbody>
                   </table>
               </div>
+              
+              <div id="auto-content" class="tab-content">
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Auto</th>
+                              <th>Coverage & Eligibility</th>
+                          </tr>
+                      </thead>
+                      <tbody id="auto-coverage-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Auto</th>
+                              <th>Liability Coverage</th>
+                          </tr>
+                      </thead>
+                      <tbody id="auto-liability-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Auto</th>
+                              <th>Physical Damage Coverage</th>
+                          </tr>
+                      </thead>
+                      <tbody id="auto-physical-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Auto</th>
+                              <th>UM/UIM Coverage</th>
+                          </tr>
+                      </thead>
+                      <tbody id="auto-um-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Auto</th>
+                              <th>PIP/MedPay Coverage</th>
+                          </tr>
+                      </thead>
+                      <tbody id="auto-pip-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Auto</th>
+                              <th>Exclusions & Limitations</th>
+                          </tr>
+                      </thead>
+                      <tbody id="auto-exclusions-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Auto</th>
+                              <th>General Conditions</th>
+                          </tr>
+                      </thead>
+                      <tbody id="auto-general-table">
+                      </tbody>
+                  </table>
+              </div>
+
           </div>
           
           <!-- Chat Panel (30%) -->
@@ -375,6 +449,30 @@
                 fetch("fire_amendment.json")
                   .then(response => response.json())
                   .then(json => loadSmartSheet("amendment",json, progress_step/4));
+              }
+
+              if (auto) {              
+                fetch("auto_coverage.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("coverage",json, progress_step/7));
+                fetch("auto_liability.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("liability",json, progress_step/7));
+                fetch("auto_physical.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("physical",json, progress_step/7));
+                fetch("auto_UM.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("um",json, progress_step/7));
+                fetch("auto_PIP.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("pip",json, progress_step/7));
+                fetch("auto_exclusions.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("exclusions",json, progress_step/7));
+                fetch("auto_general.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("general",json, progress_step/7));
               }
             }
           })();
