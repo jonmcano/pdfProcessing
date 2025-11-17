@@ -1,991 +1,655 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>   
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexxari</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <head>   
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" type="text/css" href="lexxari.css" />
+      <title>Lexxari</title>
+  </head>
+  <body>
+      <div class="top-bar">
+          <img src="lexxari_primary_black_white.png" alt="Lexxari Logo" class="logo">
+      </div>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #000000;
-            min-height: 100vh;
-        }
-        
-        .top-bar {
-            width: 100%;
-            background: #ffffff;
-            padding: 20px;
-            border-bottom: 3px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-        }
+      <div class="page-container">
+          <!-- Left Panel (20%) -->
+          <div class="left-panel">
+              <div style="width: 100%; max-width: 500px; vertical-align:top;">
+                  <div class="container" id="policy-details" style="font-size: 16px;"></div>
+                  <div class="container">
+                      <label>Status</label><br>
+                      <div class="progress-bar" id="progressBar">0%</div>
+                  </div>
+                  <div class="container">
+                    <form id="uploadForm">
+                        <div class="form-group" id="damage-type">
+                            <label>Damage Type *</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="damageType" value="hail" id="hail">
+                                    <span>Hail</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="damageType" value="wind" id="wind">
+                                    <span>Wind</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="damageType" value="fire" id="fire">
+                                    <span>Fire</span>
+                                </label>
+                            </div>
+                        </div>
 
-        .logo {
-            height: 50px;
-            width: auto;
-            margin-left: 20px;
-        }
+                        <div class="form-group">
+                            <label>Select File *</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="fileInput" name="file" required>
+                                <label for="fileInput" class="file-input-label">
+                                    <div>
+                                        <div class="upload-icon">📁</div>
+                                        <div>Click to select a file</div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div id="fileInfo" class="file-info" style="display: none;"></div>
+                        </div>
 
-        
-        .page-container {
-            display: flex;
-            min-height: 100vh;
-        }
+                        <button type="submit" id="submitBtn">Upload Policy</button>
+                    </form>
 
-        .left-panel {
-            width: 20%;
-            background: #FFFFFF;
-            padding: 20px;
-            align-items: center;
-            justify-content: center;
-            border-right: 3px solid #333333;
-        }
-
-        .right-panel {
-            width: 50%;
-            background: #ffffff;
-            padding: 20px;
-        }
-        
-        .chat-panel {
-            width: 30%;
-            background: #FFFFFF;
-            border-left: 3px solid #333333;
-        }
-        
-        .demo-chat {
-            display: none;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            border: 1px solid #e0e0e0;
-        }
-
-        h1 {
-            color: #000000;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .chat-logo {
-            width: 100%; /* or any custom size */
-            height: 100%; 
-            object-fit: contain;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333333;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: inherit;
-        }
-
-        input[type="text"]:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #000000;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-weight: 400;
-            color: #333333;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #000000;
-        }
-
-        .checkbox-label:hover {
-            color: #000000;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-input-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            border: 2px dashed #333333;
-            border-radius: 8px;
-            background: #f5f5f5;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .file-input-label:hover {
-            background: #e8e8e8;
-            border-color: #000000;
-        }
-
-        .file-info {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f0f0f0;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #000000;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .success-message {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f0f0f0;
-            color: #000000;
-            border: 1px solid #cccccc;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-
-        /* Tab Styles */
-        .tabs-container {
-            display: flex;
-            border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 15px 30px;
-            background: #f5f5f5;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            margin-right: 5px;
-        }
-
-        .tab:hover {
-            background: #e8e8e8;
-            color: #000;
-        }
-
-        .tab.active {
-            background: #000000;
-            color: #ffffff;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 20px;
-            animation: fadeIn 0.3s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .content-placeholder {
-            padding: 40px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            border: 2px dashed #e0e0e0;
-            text-align: center;
-            color: #666;
-        }
-
-        .qa-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .qa-table th,
-        .qa-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .qa-table th {
-            background: #000000;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-
-        .qa-table td {
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .qa-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .qa-table tr:hover {
-            background: #f9f9f9;
-        }
-
-        .question-cell {
-            font-weight: 600;
-            width: 40%;
-        }
-        .answer-cell {
-            width: 60%;
-        }
-
-        .page-title {
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 30px;vertical-align:top;
-            text-align: center;
-        }
-        
-        .chat-header {
-            background: #ffffff;
-            color: #000000;
-            padding: 1rem 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .chat-header h1 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .logo-icon {
-            width: 30px;
-            height: 30px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            height: 600px;
-        }
-
-        .message {
-            display: flex;
-            gap: 0.75rem;
-            max-width: 70%;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .message-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .message.user .message-avatar {
-            background: #000000;
-        }
-
-        .message.bot .message-avatar {
-            background: #666666;
-        }
-
-        .message-content {
-            background: #f5f5f5;
-            padding: 0.75rem 1rem;
-            border-radius: 1rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            word-wrap: break-word;
-        }
-
-        .message.user .message-content {
-            background: #000000;
-            color: white;
-            border-bottom-right-radius: 0.25rem;
-        }
-
-        .message.bot .message-content {
-            border-bottom-left-radius: 0.25rem;
-        }
-
-        .chat-input-container {
-            padding: 1rem 1.5rem;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            position: sticky;
-            bottom: 0;
-        }
-
-        .chat-input-wrapper {
-            display: flex;
-            gap: 0.75rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 1.5rem;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .chat-input:focus {
-            border-color: #000000;
-        }
-
-        .send-button {
-            width: 25%;
-        }
-        
-        .progress-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 25px;
-            overflow: hidden;
-            height: 30px;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background-color: #000000;
-            width: 0%;
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-
-    </style>
-</head>
-<body>
-    <div class="top-bar">
-        <img src="lexxari_primary_black_white.png" alt="Lexxari Logo" class="logo">
-    </div>
-
-    <div class="page-container">
-        <!-- Left Panel (20%) -->
-        <div class="left-panel">
-            <div style="width: 100%; max-width: 500px; vertical-align:top;">
-                <div class="container" id="policy-details" style="font-size: 16px;"></div>
-                <div class="container">
-                    <label>Status</label><br>
-                    <div class="progress-bar" id="progressBar">0%</div>
+                    <div id="successMessage" class="success-message">
+                        ✅ Policy uploaded!
+                    </div>
                 </div>
-                <div class="container">
-                  <form id="uploadForm">
-                      <div class="form-group" id="damage-type">
-                          <label>Damage Type *</label>
-                          <div class="checkbox-group">
-                              <label class="checkbox-label">
-                                  <input type="checkbox" name="damageType" value="hail-wind" id="hailWind">
-                                  <span>Hail/Wind</span>
-                              </label>
-                              <label class="checkbox-label">
-                                  <input type="checkbox" name="damageType" value="fire" id="fire">
-                                  <span>Fire</span>
-                              </label>
-                          </div>
-                      </div>
+              </div>
+          </div>
 
-                      <div class="form-group">
-                          <label>Select File *</label>
-                          <div class="file-input-wrapper">
-                              <input type="file" id="fileInput" name="file" required>
-                              <label for="fileInput" class="file-input-label">
-                                  <div>
-                                      <div class="upload-icon">📁</div>
-                                      <div>Click to select a file</div>
-                                  </div>
-                              </label>
-                          </div>
-                          <div id="fileInfo" class="file-info" style="display: none;"></div>
-                      </div>
+          <!-- Right Panel (50%) -->
+          <div class="right-panel">
+              <div class="top-bar">
+                  <img src="lexxari_primary_white_black.png" alt="Smartsheet Logo" class="logo">
+                  <h3>Smart Sheet</h3>
+              </div>
+              <div class="tabs-container">
+                  <button class="tab active" data-tab="hail" id="hail-tab" >Hail</button>
+                  <button class="tab" data-tab="wind" id="wind-tab" >Wind</button>
+                  <button class="tab" data-tab="fire" id="fire-tab">Fire</button>
+                  <button class="tab" data-tab="auto" id="auto-tab">Auto</button>
+              </div>
+              <div id="hail-content" class="tab-content">
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Hail</th>
+                              <th>Covered</th>
+                          </tr>
+                      </thead>
+                      <tbody id="hail-covered-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Hail</th>
+                              <th>Not Covered</th>
+                          </tr>
+                      </thead>
+                      <tbody id="hail-not-covered-table"">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Hail</th>
+                              <th>Deductibles</th>
+                          </tr>
+                      </thead>
+                      <tbody id="hail-deductible-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Hail</th>
+                              <th>Amendments</th>
+                          </tr>
+                      </thead>
+                      <tbody id="hail-amendment-table">
+                      </tbody>
+                  </table>
+              </div>
 
-                      <button type="submit" id="submitBtn">Upload Policy</button>
-                  </form>
+              <div id="wind-content" class="tab-content">
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Wind</th>
+                              <th>Covered</th>
+                          </tr>
+                      </thead>
+                      <tbody id="wind-covered-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Wind</th>
+                              <th>Not Covered</th>
+                          </tr>
+                      </thead>
+                      <tbody id="wind-not-covered-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Wind</th>
+                              <th>Deductibles</th>
+                          </tr>
+                      </thead>
+                      <tbody id="wind-deductible-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Wind</th>
+                              <th>Amendments</th>
+                          </tr>
+                      </thead>
+                      <tbody id="wind-amendment-table">
+                      </tbody>
+                  </table>
+              </div>
+              
+              <div id="fire-content" class="tab-content">
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Fire</th>
+                              <th>Covered</th>
+                          </tr>
+                      </thead>
+                      <tbody id="fire-covered-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Fire</th>
+                              <th>Not Covered</th>
+                          </tr>
+                      </thead>
+                      <tbody id="fire-not-covered-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Fire</th>
+                              <th>Deductibles</th>
+                          </tr>
+                      </thead>
+                      <tbody id="fire-deductible-table">
+                      </tbody>
+                  </table>
+                  <table class="qa-table">
+                      <thead>
+                          <tr>
+                              <th>Fire</th>
+                              <th>Amendments</th>
+                          </tr>
+                      </thead>
+                      <tbody id="fire-amendment-table">
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+          
+          <!-- Chat Panel (30%) -->
+          <div class="chat-panel">
+            <div class="chat-header">
+                <h1>
+                    <img src="lexxari_black_transparent.png" alt="Lexxari Logo" class="logo-icon">
+                    Lexxari
+                </h1>
+            </div>
+            <div id="demo_chat" class="demo-chat" >
+              <div class="chat-messages" id="messages">
+                  <div class="message bot">
+                      <div class="message-avatar">L</div>
+                      <div class="message-content">Hello! How can I help you today?</div>
+                  </div>
+              </div>
 
-                  <div id="successMessage" class="success-message">
-                      ✅ Policy uploaded!
+              <div class="chat-input-container">
+                  <div class="chat-input-wrapper">
+                      <input 
+                          type="text" 
+                          class="chat-input" 
+                          id="messageInput" 
+                          placeholder="Type a message..."
+                          autocomplete="off"
+                      >
+                      <button class="send-button" id="sendButton">Send</button>
                   </div>
               </div>
             </div>
-        </div>
-
-        <!-- Right Panel (50%) -->
-        <div class="right-panel">
-            <div class="top-bar">
-                <img src="lexxari_primary_white_black.png" alt="Smartsheet Logo" class="logo">
-                <h3>Smart Sheet</h3>
-            </div>
-            <div class="tabs-container">
-                <button class="tab active" data-tab="hail-wind" id="hail-wind-tab" >Hail/Wind</button>
-                <button class="tab" data-tab="fire" id="fire-tab">Fire</button>
-                <button class="tab" data-tab="auto" id="auto-tab">Auto</button>
-            </div>
-
-            <div id="hail-wind-content" class="tab-content">
-                <table class="qa-table">
-                    <thead>
-                        <tr>
-                            <th>Question</th>
-                            <th>Answer</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hailTable">
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="fire-content" class="tab-content">
-                <table class="qa-table">
-                    <thead>
-                        <tr>
-                            <th>Question</th>
-                            <th>Answer</th>
-                        </tr>
-                    </thead>
-                    <tbody id="fireTable">
-                    </tbody>
-                </table>
-            </div>
-            
-            <div id="auto-content" class="tab-content">
-                <table class="qa-table">
-                    <thead>
-                        <tr>
-                            <th>Question</th>
-                            <th>Answer</th>
-                        </tr>
-                    </thead>
-                    <tbody id="autoTable">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!-- Chat Panel (30%) -->
-        <div class="chat-panel">
-          <div class="chat-header">
-              <h1>
-                  <img src="lexxari_black_transparent.png" alt="Lexxari Logo" class="logo-icon">
-                  Lexxari
-              </h1>
           </div>
-          <div id="demo_chat" class="demo-chat" >
-            <div class="chat-messages" id="messages">
-                <div class="message bot">
-                    <div class="message-avatar">L</div>
-                    <div class="message-content">Hello! How can I help you today?</div>
-                </div>
-            </div>
+      </div>
+  </body>
+  <script>
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const successMessage = document.getElementById('successMessage');
+    const submitBtn = document.getElementById('submitBtn');
 
-            <div class="chat-input-container">
-                <div class="chat-input-wrapper">
-                    <input 
-                        type="text" 
-                        class="chat-input" 
-                        id="messageInput" 
-                        placeholder="Type a message..."
-                        autocomplete="off"
-                    >
-                    <button class="send-button" id="sendButton">Send</button>
-                </div>
-            </div>
-          </div>
-        </div>
-    </div>
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const fileSize = (file.size / 1024).toFixed(2);
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `
+                <strong>Selected:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${fileSize} KB<br>
+                <strong>Type:</strong> ${file.type || 'Unknown'}
+            `;
+        }
+    });
 
-    <script>
-        const form = document.getElementById('uploadForm');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const successMessage = document.getElementById('successMessage');
-        const submitBtn = document.getElementById('submitBtn');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const hail = document.getElementById('hail').checked;
+        const wind = document.getElementById('wind').checked;
+        const fire = document.getElementById('fire').checked;
+        const auto = isAuto();
+        const file = fileInput.files[0];
+        
+        var url = window.location.href;
+        var lastPart = url.substr(url.lastIndexOf('/') + 1);
 
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const fileSize = (file.size / 1024).toFixed(2);
-                fileInfo.style.display = 'block';
-                fileInfo.innerHTML = `
-                    <strong>Selected:</strong> ${file.name}<br>
-                    <strong>Size:</strong> ${fileSize} KB<br>
-                    <strong>Type:</strong> ${file.type || 'Unknown'}
-                `;
-            }
-        });
+        if (!file) {
+            alert('Please select a file');
+            return;
+        }
+        
+        var url = window.location.href;
+        var lastPart = url.substr(url.lastIndexOf('/') + 1);
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const hailWind = document.getElementById('hailWind').checked;
-            const fire = document.getElementById('fire').checked;
-            const auto = isAuto();
-            const file = fileInput.files[0];
-            
-            var url = window.location.href;
-            var lastPart = url.substr(url.lastIndexOf('/') + 1);
+        var progress_step = 80;
+        var step_divide = 0;
+        if (!auto) {
 
-            if (!file) {
-                alert('Please select a file');
-                return;
-            }
-            
-            var url = window.location.href;
-            var lastPart = url.substr(url.lastIndexOf('/') + 1);
-
-            var progress_step = 80;
-            if (!auto) {
-
-              if (!hailWind && !fire) {
-                  alert('Please select at least one damage type');
-                  return;
-              }
+          if (!hail && !fire && !wind) {
+              alert('Please select at least one damage type');
+              return;
+          }
+          
+          if (hail)
+              step_divide = step_divide + 1;
+          if (wind)
+              step_divide = step_divide + 1;
+          if (fire)
+              step_divide = step_divide + 1;
               
-              if (hailWind && fire)
-                  progress_step = 40;
-            }
+          progress_step = progress_step / step_divide;
+        }
+        
+        // Simulate upload process
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading...';
+
+        // Here you would normally send the data to a server
+        // For demonstration, we'll just simulate a delay
+        setTimeout(() => {
+            successMessage.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Upload Policy';
             
-            // Simulate upload process
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Uploading...';
+          setProgress(20);
 
-            // Here you would normally send the data to a server
-            // For demonstration, we'll just simulate a delay
-            setTimeout(() => {
-                successMessage.style.display = 'block';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Upload Policy';
-                
-              setProgress(20);
+          const form = new FormData();
+            form.append('pdf_file', file);
 
-              const form = new FormData();
-                form.append('pdf_file', file);
-
-              (async () => {
-                const rawResponse = await fetch('/api/upload', {
-                  method: 'POST',
-                  headers: {
-                    'accept': 'application/json'
-                  },
-                  body: form
-                });
-                
-                const upload_response = await rawResponse.json();
-                if (upload_response) {
-                  //  Show chat
-                  document.getElementById('demo_chat').style.display = 'block';
-                  
-                  fetch("policy_details.json")
-                    .then(response => response.json())
-                    .then(json => loadPolicyDetails(json));
-                  
-                
-                  if (hailWind) {              
-                    fetch("hail_wind.json")
-                      .then(response => response.json())
-                      .then(json => loadSmartSheet(json, progress_step));
-                  }
-   
-                  if (fire) {              
-                    fetch("fire.json")
-                      .then(response => response.json())
-                      .then(json => loadSmartSheet(json, progress_step));
-                  }
-                  
-                  if (auto) {
-                    fetch("auto.json")
-                      .then(response => response.json())
-                      .then(json => loadSmartSheet(json, progress_step));                  
-                  }
-
-                  // Reset form after 2 seconds
-                  // setTimeout(() => {
-                  //    fileInput.value = '';
-                  //    fileInfo.style.display = 'none';
-                  //    successMessage.style.display = 'none';
-                  // }, 2000);
-                }
-              })();
-            }, 1500);
-        });
-
-        // Tab functionality
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const hailWindCheckbox = document.getElementById('hailWind');
-        const fireCheckbox = document.getElementById('fire');
-        const hailWindTab = document.querySelector('[data-tab="hail-wind"]');
-        const fireTab = document.querySelector('[data-tab="fire"]');
-        const autoTab = document.querySelector('[data-tab="auto"]');
-        const damageType =  document.getElementById('damage-type');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs and contents
-                tabs.forEach(t => t.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-
-                // Add active class to clicked tab
-                tab.classList.add('active');
-
-                // Show corresponding content
-                const tabName = tab.getAttribute('data-tab');
-                document.getElementById(`${tabName}-content`).classList.add('active');
+          (async () => {
+            const rawResponse = await fetch('/api/upload', {
+              method: 'POST',
+              headers: {
+                'accept': 'application/json'
+              },
+              body: form
             });
-        });
+            
+            const upload_response = await rawResponse.json();
+            if (upload_response) {
+              //  Show chat
+              document.getElementById('demo_chat').style.display = 'block';
+              
+              fetch("policy_details.json")
+                .then(response => response.json())
+                .then(json => loadPolicyDetails(json));
+              
+            
+              if (hail) {              
+                fetch("hail_covered.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("covered",json, progress_step/4));
+                fetch("hail_not_covered.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("not-covered",json, progress_step/4));
+                fetch("hail_deductible.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("deductible",json, progress_step/4));
+                fetch("hail_amendment.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("amendment",json, progress_step/4));
+              }
 
-        // Show/hide tabs based on checkbox selection
-        function updateTabVisibility() {
-            if (hailWindCheckbox.checked) {
-                hailWindTab.style.display = 'block';
-            } else {
-                hailWindTab.style.display = 'none';
-                // If this tab was active, switch to another visible tab
-                if (hailWindTab.classList.contains('active') && fireCheckbox.checked) {
+              if (wind) {              
+                fetch("wind_covered.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("covered",json, progress_step/4));
+                fetch("wind_not_covered.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("not-covered",json, progress_step/4));
+                fetch("wind_deductible.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("deductible",json, progress_step/4));
+                fetch("wind_amendment.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("amendment",json, progress_step/4));
+              }
+
+              if (fire) {              
+                fetch("fire_covered.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("covered",json, progress_step/4));
+                fetch("fire_not_covered.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("not-covered",json, progress_step/4));
+                fetch("fire_deductible.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("deductible",json, progress_step/4));
+                fetch("fire_amendment.json")
+                  .then(response => response.json())
+                  .then(json => loadSmartSheet("amendment",json, progress_step/4));
+              }
+            }
+          })();
+        }, 1500);
+    });
+
+    // Tab functionality
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const windCheckbox = document.getElementById('wind');
+    const hailCheckbox = document.getElementById('hail');
+    const fireCheckbox = document.getElementById('fire');
+    const windTab = document.querySelector('[data-tab="wind"]');
+    const hailTab = document.querySelector('[data-tab="hail"]');
+    const fireTab = document.querySelector('[data-tab="fire"]');
+    const autoTab = document.querySelector('[data-tab="auto"]');
+    const damageType =  document.getElementById('damage-type');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and contents
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            // Show corresponding content
+            const tabName = tab.getAttribute('data-tab');
+            document.getElementById(`${tabName}-content`).classList.add('active');
+        });
+    });
+
+    // Show/hide tabs based on checkbox selection
+    function updateTabVisibility() {
+        if (hailCheckbox.checked) {
+            hailTab.style.display = 'block';
+        } else {
+            hailTab.style.display = 'none';
+            // If this tab was active, switch to another visible tab
+            if (hailTab.classList.contains('active') && fireCheckbox.checked) {
+                fireTab.click();
+            }
+            if (hailTab.classList.contains('active') && windCheckbox.checked) {
+                windTab.click();
+            }
+        }
+
+        if (windCheckbox.checked) {
+            windTab.style.display = 'block';
+        } else {
+            windTab.style.display = 'none';
+            // If this tab was active, switch to another visible tab
+            if (windTab.classList.contains('active') && fireCheckbox.checked) {
+                fireTab.click();
+            }
+            if (windTab.classList.contains('active') && hailCheckbox.checked) {
+                hailTab.click();
+            }
+        }
+
+        if (fireCheckbox.checked) {
+            fireTab.style.display = 'block';
+        } else {
+            fireTab.style.display = 'none';
+            // If this tab was active, switch to another visible tab
+            if (fireTab.classList.contains('active') && windCheckbox.checked) {
+               windTab.click();
+            }
+            if (fireTab.classList.contains('active') && hailCheckbox.checked) {
+               hailTab.click();
+            }
+        }
+
+        // If no checkboxes are selected, hide all tab content
+        if (!hailCheckbox.checked && !windCheckbox.checked && !fireCheckbox.checked) {
+            tabContents.forEach(content => content.classList.remove('active'));
+        } else {
+            // If at least one is checked and no tab is active, activate the first visible one
+            const hasActiveTab = Array.from(tabs).some(tab => 
+                tab.classList.contains('active') && tab.style.display !== 'none'
+            );
+            if (!hasActiveTab) {
+                if (hailCheckbox.checked) {
+                    hailTab.click();
+                } else if (windCheckbox.checked) {
+                    windTab.click();
+                } else if (fireCheckbox.checked) {
                     fireTab.click();
                 }
             }
-
-            if (fireCheckbox.checked) {
-                fireTab.style.display = 'block';
-            } else {
-                fireTab.style.display = 'none';
-                // If this tab was active, switch to another visible tab
-                if (fireTab.classList.contains('active') && hailWindCheckbox.checked) {
-                    hailWindTab.click();
-                }
-            }
-
-            // If no checkboxes are selected, hide all tab content
-            if (!hailWindCheckbox.checked && !fireCheckbox.checked) {
-                tabContents.forEach(content => content.classList.remove('active'));
-            } else {
-                // If at least one is checked and no tab is active, activate the first visible one
-                const hasActiveTab = Array.from(tabs).some(tab => 
-                    tab.classList.contains('active') && tab.style.display !== 'none'
-                );
-                if (!hasActiveTab) {
-                    if (hailWindCheckbox.checked) {
-                        hailWindTab.click();
-                    } else if (fireCheckbox.checked) {
-                        fireTab.click();
-                    }
-                }
-            }
         }
+    }
 
-        // Initialize tab visibility (hide all tabs initially)
-        hailWindTab.style.display = 'none';
-        fireTab.style.display = 'none';
-        autoTab.style.display = 'none';
+    // Initialize tab visibility (hide all tabs initially)
+    hailTab.style.display = 'none';
+    windTab.style.display = 'none';
+    fireTab.style.display = 'none';
+    autoTab.style.display = 'none';
 
-        // Listen for checkbox changes
-        hailWindCheckbox.addEventListener('change', updateTabVisibility);
-        fireCheckbox.addEventListener('change', updateTabVisibility);
-        
-        function loadPolicyDetails(json) {
-          const form = new FormData();
-          form.append('questions', JSON.stringify(json));
-          (async () => {
-            var rawResponse = await fetch('/api/pdf-qa', {
-              method: 'POST',
-              headers: {
-                'accept': 'application/json'
-              },
-              body: form
-            });
-            
-            var answers = await rawResponse.json();
-   
-            var policyDetails = document.getElementById("policy-details");
-            policyDetails.innerHTML = `
-                    <table><tr><td><strong>Policy Holder:</strong><br>${answers[0].answer}</td></tr>
-                    <tr><td><strong>Policy Address:</strong><br>${answers[1].answer}</td></tr>
-                    <tr><td><strong>Policy Number:</strong><br>${answers[2].answer}</td></tr>
-                    <tr><td><strong>Policy Period:</strong><br>${answers[3].answer}</td></tr></table>
-            `;
-          
-          })();
-        }
+    // Listen for checkbox changes
+    hailCheckbox.addEventListener('change', updateTabVisibility);
+    windCheckbox.addEventListener('change', updateTabVisibility);
+    fireCheckbox.addEventListener('change', updateTabVisibility);
 
-        function loadSmartSheet(json, progress_step) {
-          const form = new FormData();
-            form.append('questions', JSON.stringify(json));
-
-          (async () => {
-            const rawResponse = await fetch('/api/pdf-qa', {
-              method: 'POST',
-              headers: {
-                'accept': 'application/json'
-              },
-              body: form
-            });
-            
-            const answers = await rawResponse.json();
-            var arrayLength = answers.length;
-            
-            if (json.damage_type == "HAIL/WIND")
-                tableId="hailTable";
-            else if (json.damage_type == "FIRE")
-                tableId="fireTable";
-            else if (json.damage_type == "AUTO")
-                tableId="autoTable";
-                
-            var currentTable = document.getElementById(tableId);
-            var new_tbody = document.createElement('tbody');
-            new_tbody.id = tableId;
-            
-            for (var i = 0; i < arrayLength; i++) {
-                var row = document.createElement("tr");
-                
-                var columnQ = document.createElement("td");
-                columnQ.classList.add("question-cell");
-                columnQ.textContent = answers[i].question;
-                row.appendChild(columnQ);
-                
-                var columnA = document.createElement("td");
-                columnA.classList.add("answer-cell");
-                columnA.textContent = answers[i].answer;
-                row.appendChild(columnA);
-               
-                new_tbody.appendChild(row);
-             }
-             
-             currentTable.parentNode.replaceChild(new_tbody, currentTable)
-             
-             setProgress(getProgress()+progress_step);
-
-             if (json.damage_type == "HAIL/WIND")
-                document.getElementById('hail-wind-tab').click();
-             else if (json.damage_type == "FIRE")
-                document.getElementById('fire-tab').click();
-             else if (json.damage_type == "AUTO")
-                document.getElementById('auto-tab').click();
-            
-          })();
-        }
-        
-        function setProgress(percentage) {
-            // Ensure percentage is between 0 and 100
-            percentage = Math.max(0, Math.min(100, percentage));
-            
-            
-            progressBar.style.width = percentage + '%';
-            progressBar.textContent = percentage + '%';
-        }
-
-        function getProgress() {
-            return parseFloat(progressBar.style.width);
-        }
-
-        const progressBar = document.getElementById('progressBar');
-        const messagesContainer = document.getElementById('messages');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-
-        function addMessage(text, isUser) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-            
-            const avatar = document.createElement('div');
-            avatar.className = 'message-avatar';
-            avatar.textContent = isUser ? 'U' : 'L';
-            
-            const content = document.createElement('div');
-            content.className = 'message-content';
-            content.textContent = text;
-            
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(content);
-            messagesContainer.appendChild(messageDiv);
-            
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            sendButton.disabled = false;             
-        }
-
-        function sendMessage() {
-            var text = messageInput.value.trim();
-            if (!text) return;
-            
-            addMessage(text, true);
-            
-            sendButton.disabled = true;             
-            var chatQuestions = { questions: [] };
-            chatQuestions.questions.push(text);
-
-            var chatForm = new FormData();
-            chatForm.append('questions', JSON.stringify(chatQuestions));
-
-            messageInput.value = '';
-            
-            fetch('/api/pdf-qa', {
-              method: 'POST',
-              headers: { 'accept': 'application/json' },
-              body: chatForm
-            })
-            .then(response => response.json())
-            .then(chatAnswers => addMessage(chatAnswers[0].answer, false));
-            
-        }
-
-        sendButton.addEventListener('click', sendMessage);
-        
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+    function loadPolicyDetails(json) {
+      const form = new FormData();
+      form.append('questions', JSON.stringify(json));
+      (async () => {
+        var rawResponse = await fetch('/api/pdf-qa', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json'
+          },
+          body: form
         });
-
-        messageInput.focus();
         
-        function isAuto() {
-            var url = window.location.href;
-            var lastPart = url.substr(url.lastIndexOf('/') + 1);
-            if (lastPart == "") {
-               lastPart = url.substr(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, 4);
-            } 
-            if (lastPart === "auto")
-              return true;
-              
-            return false;
+        var answers = await rawResponse.json();
+
+        var policyDetails = document.getElementById("policy-details");
+        policyDetails.innerHTML = `
+                <table><tr><td><strong>Policy Holder:</strong><br>${answers[0].answer}</td></tr>
+                <tr><td><strong>Policy Address:</strong><br>${answers[1].answer}</td></tr>
+                <tr><td><strong>Policy Number:</strong><br>${answers[2].answer}</td></tr>
+                <tr><td><strong>Policy Period:</strong><br>${answers[3].answer}</td></tr></table>
+        `;
+      
+      })();
+    }
+
+    function loadSmartSheet(section, json, progress_step) {
+      const form = new FormData();
+        form.append('questions', JSON.stringify(json));
+
+      (async () => {
+        const rawResponse = await fetch('/api/pdf-qa', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json'
+          },
+          body: form
+        });
+        
+        const answers = await rawResponse.json();
+        var arrayLength = answers.length;
+        
+        tableId=json.damage_type.toLowerCase() + "-" + section + "-table";
+            
+        var currentTable = document.getElementById(tableId);
+        var new_tbody = document.createElement('tbody');
+        new_tbody.id = tableId;
+        
+        for (var i = 0; i < arrayLength; i++) {
+            var row = document.createElement("tr");
+            
+            var columnQ = document.createElement("td");
+            columnQ.classList.add("question-cell");
+            columnQ.textContent = answers[i].question;
+            row.appendChild(columnQ);
+            
+            var columnA = document.createElement("td");
+            columnA.classList.add("answer-cell");
+            columnA.textContent = answers[i].answer;
+            row.appendChild(columnA);
+           
+            new_tbody.appendChild(row);
+         }
+         
+         currentTable.parentNode.replaceChild(new_tbody, currentTable)
+         
+         setProgress(getProgress()+progress_step);
+
+         tabId=json.damage_type.toLowerCase() + "-tab";
+         document.getElementById(tabId).click();
+         
+      })();
+    }
+
+    function setProgress(percentage) {
+        // Ensure percentage is between 0 and 100
+        percentage = Math.max(0, Math.min(100, percentage));
+        
+        
+        progressBar.style.width = percentage + '%';
+        progressBar.textContent = Math.round( percentage ) + '%';
+    }
+
+    function getProgress() {
+        return parseFloat(progressBar.style.width);
+    }
+
+    const progressBar = document.getElementById('progressBar');
+    const messagesContainer = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+
+    function addMessage(text, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.textContent = isUser ? 'U' : 'L';
+        
+        const content = document.createElement('div');
+        content.className = 'message-content';
+        content.textContent = text;
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(content);
+        messagesContainer.appendChild(messageDiv);
+        
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        sendButton.disabled = false;             
+    }
+
+    function sendMessage() {
+        var text = messageInput.value.trim();
+        if (!text) return;
+        
+        addMessage(text, true);
+        
+        sendButton.disabled = true;             
+        var chatQuestions = { questions: [] };
+        chatQuestions.questions.push(text);
+
+        var chatForm = new FormData();
+        chatForm.append('questions', JSON.stringify(chatQuestions));
+
+        messageInput.value = '';
+        
+        fetch('/api/pdf-qa', {
+          method: 'POST',
+          headers: { 'accept': 'application/json' },
+          body: chatForm
+        })
+        .then(response => response.json())
+        .then(chatAnswers => addMessage(chatAnswers[0].answer, false));
+        
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
         }
-        
-        window.onload = function() { 
+    });
 
-            if (isAuto()) {
-              autoTab.style.display = 'block';
-              damageType.style.display = 'none';
-            }  else {
-              autoTab.style.display = 'none';
-              damageType.style.display = 'block';            
-            }
+    messageInput.focus();
+
+    function isAuto() {
+        var url = window.location.href;
+        var lastPart = url.substr(url.lastIndexOf('/') + 1);
+        if (lastPart == "") {
+           lastPart = url.substr(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, 4);
+        } 
+        if (lastPart === "auto")
+          return true;
           
+        return false;
+    }
+
+    window.onload = function() { 
+
+        if (isAuto()) {
+          autoTab.style.display = 'block';
+          damageType.style.display = 'none';
+        }  else {
+          autoTab.style.display = 'none';
+          damageType.style.display = 'block';            
         }
-    </script>
-</body>
+      
+    }
+      
+  </script>
 </html>

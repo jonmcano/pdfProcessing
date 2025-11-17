@@ -1,0 +1,9 @@
+{
+   "damage_type":"FIRE",
+   "questions":[
+	"Identify the fire deductible for this policy",
+	"Clarify whether fire damage has a special deductible separate from other perils",
+	"Specify whether the fire deductible is percentage-based or a flat amount",
+	"Explain how the deductible applies in a fire loss claim"
+   ]
+}

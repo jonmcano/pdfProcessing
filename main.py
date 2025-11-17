@@ -23,6 +23,8 @@ WATSONX_APIKEY = os.getenv("WATSONX_APIKEY")
 WATSONX_PROJECT_ID = os.getenv("WATSONX_PROJECT_ID")
 MODEL_ID = "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"
 
+if os.getenv("MODEL_ID") is not None:
+    MODEL_ID = os.getenv("MODEL_ID")
 
 def init_model():
     credentials = Credentials(api_key=WATSONX_APIKEY, url=WATSONX_URL)

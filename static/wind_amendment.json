@@ -1,0 +1,9 @@
+{
+   "damage_type":"WIND",
+   "questions":[
+	"List all amendments, endorsements, or riders related to wind",
+	"Have any amendments changed the coverage or exclusions for wind",
+	"Summarize any added protections or limitations for these perils due to endorsements",
+	"Identify any state-specific or carrier-specific amendments relevant to wind damage"
+   ]
+}
