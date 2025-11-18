@@ -71,7 +71,8 @@
                   <div style="width: 100%;">
                     <img src="lexxari_primary_white_black.png" alt="Smartsheet Logo" class="logo">
                     <div style="float:left;line-height:30px;">Smart Sheets</div>
-                    <button class="send-button" id="exportButton" >Export PDF</button>
+                    <button class="export-button" id="exportButton" >Export PDF</button>
+                    <button class="next-steps-button" id="nextStepsButton" >What next?</button>
                   </div>
               </div>
               <div class="tabs-container">
@@ -245,7 +246,7 @@
                           <tr>
                               <th>Auto</th>
                               <th>UM/UIM Coverage</th>
-                          </tr>
+                          </tr>next
                       </thead>
                       <tbody id="auto-um-table">
                       </tbody>
@@ -315,6 +316,17 @@
             </div>
           </div>
       </div>
+
+    <!-- Popup overlay -->
+    <div class="popup-overlay" id="popupOverlay" onclick="closePopup()">
+        <!-- Popup container -->
+        <div class="popup" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closePopup()">&times;</button>
+            <div class="popup-content" id="popupContent">
+            </div>
+        </div>
+    </div>
+    
   </body>
   <script>
     const form = document.getElementById('uploadForm');
@@ -639,7 +651,18 @@
             
             var columnA = document.createElement("td");
             columnA.classList.add("answer-cell");
-            columnA.textContent = answers[i].answer;
+            if (isJson(answers[i].answer)) {
+              var currentAnswer = JSON.parse(answers[i].answer);
+              var divA = document.createElement("div");
+              if (Array.isArray(currentAnswer)) {
+                jsonArrayToHTMLList(currentAnswer, divA);
+              } else {
+                jsonObjectToHtml(currentAnswer, divA);
+              }
+                columnA.appendChild(divA);
+            } else {
+              columnA.textContent = answers[i].answer;
+            }
             row.appendChild(columnA);
            
             new_tbody.appendChild(row);
@@ -654,18 +677,66 @@
          
       })();
     }
+    
+    function isJson(str) {
+      try {
+          JSON.parse(str);
+      } catch (e) {
+          return false;
+      }
+      return true;
+    }
+    
+    function jsonObjectToHtml(jsonObj, targetDiv) {
+      var jsonParentDiv = document.createElement("div");
+      jsonParentDiv.classList.add("json-container");
+      
+      for (const [key, value] of Object.entries(jsonObj)) {
+        var jsonItemDiv = document.createElement("div");
+        jsonItemDiv.classList.add("json-item");
+        jsonItemDiv.innerHTML = `
+            <strong class="json-key">${escapeHtml(key)}:</strong>
+            <span class="json-value">${escapeHtml(value)}</span>
+        `;
+        jsonParentDiv.appendChild(jsonItemDiv);
+      }
+      
+      targetDiv.appendChild(jsonParentDiv);
+    }
+    
+    function jsonArrayToHTMLList(jsonArray, targetDiv) {
+      var answerList = document.createElement("ul");
+      for (var i = 0; i < jsonArray.length; i++) {
+        var answerItem = document.createElement("li");
+        answerItem.innerHTML = escapeHtml(jsonArray[i]);
+        answerList.appendChild(answerItem);
+      }
+      targetDiv.appendChild(answerList);
+    }
 
+    // Helper function to escape HTML special characters
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
+    
     function setProgress(percentage) {
-        // Ensure percentage is between 0 and 100
-        percentage = Math.max(0, Math.min(100, percentage));
-        
-        
-        progressBar.style.width = percentage + '%';
-        progressBar.textContent = Math.round( percentage ) + '%';
+      // Ensure percentage is between 0 and 100
+      percentage = Math.max(0, Math.min(100, percentage));
+      
+      
+      progressBar.style.width = percentage + '%';
+      progressBar.textContent = Math.round( percentage ) + '%';
     }
 
     function getProgress() {
-        return parseFloat(progressBar.style.width);
+      return parseFloat(progressBar.style.width);
     }
 
     const progressBar = document.getElementById('progressBar');
@@ -673,86 +744,141 @@
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
     const exportButton = document.getElementById('exportButton');
+    const nextStepsButton = document.getElementById('nextStepsButton');
 
     function addMessage(text, isUser) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-        
-        const avatar = document.createElement('div');
-        avatar.className = 'message-avatar';
-        avatar.textContent = isUser ? 'U' : 'L';
-        
-        const content = document.createElement('div');
-        content.className = 'message-content';
-        content.textContent = text;
-        
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(content);
-        messagesContainer.appendChild(messageDiv);
-        
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        
-        sendButton.disabled = false;             
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = isUser ? 'U' : 'L';
+      
+      const content = document.createElement('div');
+      content.className = 'message-content';
+      content.textContent = text;
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(content);
+      messagesContainer.appendChild(messageDiv);
+      
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      sendButton.disabled = false;             
     }
 
     function sendMessage() {
-        var text = messageInput.value.trim();
-        if (!text) return;
-        
-        addMessage(text, true);
-        
-        sendButton.disabled = true;             
-        var chatQuestions = { questions: [] };
-        chatQuestions.questions.push(text);
+      var text = messageInput.value.trim();
+      if (!text) return;
+      
+      addMessage(text, true);
+      
+      sendButton.disabled = true;             
+      var chatQuestions = { questions: [] };
+      chatQuestions.questions.push(text);
 
-        var chatForm = new FormData();
-        chatForm.append('questions', JSON.stringify(chatQuestions));
+      var chatForm = new FormData();
+      chatForm.append('questions', JSON.stringify(chatQuestions));
 
-        messageInput.value = '';
-        
-        fetch('/api/pdf-qa', {
-          method: 'POST',
-          headers: { 'accept': 'application/json' },
-          body: chatForm
-        })
-        .then(response => response.json())
-        .then(chatAnswers => addMessage(chatAnswers[0].answer, false));
-        
+      messageInput.value = '';
+      
+      fetch('/api/pdf-qa', {
+        method: 'POST',
+        headers: { 'accept': 'application/json' },
+        body: chatForm
+      })
+      .then(response => response.json())
+      .then(chatAnswers => addMessage(chatAnswers[0].answer, false));
+      
     }
 
     sendButton.addEventListener('click', sendMessage);
     exportButton.addEventListener('click', exportSmartSheets);
+    nextStepsButton.addEventListener('click', showNextSteps);
 
     messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
+      if (e.key === 'Enter') {
+          sendMessage();
+      }
     });
 
     messageInput.focus();
 
     function isAuto() {
-        var url = window.location.href;
-        var lastPart = url.substr(url.lastIndexOf('/') + 1);
-        if (lastPart == "") {
-           lastPart = url.substr(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, 4);
-        } 
-        if (lastPart === "auto")
-          return true;
-          
-        return false;
+      var url = window.location.href;
+      var lastPart = url.substr(url.lastIndexOf('/') + 1);
+      if (lastPart == "") {
+         lastPart = url.substr(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, 4);
+      } 
+      if (lastPart === "auto")
+        return true;
+        
+      return false;
     }
 
     window.onload = function() { 
 
-        if (isAuto()) {
-          autoTab.style.display = 'block';
-          damageType.style.display = 'none';
-        }  else {
-          autoTab.style.display = 'none';
-          damageType.style.display = 'block';            
-        }
+      if (isAuto()) {
+        autoTab.style.display = 'block';
+        damageType.style.display = 'none';
+      }  else {
+        autoTab.style.display = 'none';
+        damageType.style.display = 'block';            
+      }
       
+    }
+    
+    function showNextSteps() {
+      var nextStepsFile = ""
+      if (hailTab.classList.contains('active'))
+        nextStepsFile = "hail_next_steps.json";
+        
+      if (windTab.classList.contains('active'))
+        nextStepsFile = "wind_next_steps.json";
+     
+      if (fireTab.classList.contains('active'))
+        nextStepsFile = "fire_next_steps.json";
+      
+      if (isAuto())
+        nextStepsFile = "";
+        
+      if (nextStepsFile != "") {
+          fetch(nextStepsFile)
+            .then(response => response.json())
+            .then(json => displayNextSteps(json));
+      
+      }
+    }    
+    
+    function displayNextSteps(nextStepsJson) {
+        const damage_type = nextStepsJson.damage_type;
+        var nextStepsLength = nextStepsJson.next_steps.length;
+        
+        var popupContent = document.getElementById("popupContent");
+        popupContent.innerHTML = `<h3>${damage_type} Next Steps:</h3>`;
+        
+        var nextStepsTable = document.createElement('tbody');
+        for (var i = 0; i < nextStepsLength; i++) {
+            var row = document.createElement("tr");
+            var section = document.createElement("th");
+            section.setAttribute("style", "float: left;");
+            section.textContent = nextStepsJson.next_steps[i].section;
+            row.appendChild(section);
+            nextStepsTable.appendChild(row);
+            
+            var stepsLength = nextStepsJson.next_steps[i].steps.length;
+            for (var n = 0; n < stepsLength; n++) {
+              row = document.createElement("tr");
+              row.classList.add("spaceUnder");
+              var step = document.createElement("td");
+              step.textContent = nextStepsJson.next_steps[i].steps[n];
+              row.appendChild(step);
+              nextStepsTable.appendChild(row);
+            }
+         }
+         
+         popupContent.appendChild(nextStepsTable);
+         openPopup();
     }
     
     function exportSmartSheets() {
@@ -770,45 +896,59 @@
     }
     
     function exportSmartSheet(smartSheetName) {
-        var pdf = new jsPDF('p', 'pt', 'letter');
-        // source can be HTML-formatted string, or a reference
-        // to an actual DOM element from which the text will be scraped.
-        source = document.getElementById(smartSheetName);
+      var pdf = new jsPDF('p', 'pt', 'letter');
+      // source can be HTML-formatted string, or a reference
+      // to an actual DOM element from which the text will be scraped.
+      source = document.getElementById(smartSheetName);
 
-        // we support special element handlers. Register them with jQuery-style 
-        // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
-        // There is no support for any other type of selectors 
-        // (class, of compound) at this time.
-        specialElementHandlers = {
-            // element with id of "bypass" - jQuery style selector
-            '#bypassme': function (element, renderer) {
-                // true = "handled elsewhere, bypass text extraction"
-                return true
-            }
-        };
-        margins = {
-            top: 80,
-            bottom: 60,
-            left: 40,
-            width: 522
-        };
-        // all coords and widths are in jsPDF instance's declared units
-        // 'inches' in this case
-        pdf.fromHTML(
-            source, // HTML string or DOM elem ref.
-            margins.left, // x coord
-            margins.top, { // y coord
-                'width': margins.width, // max width of content on PDF
-                'elementHandlers': specialElementHandlers
-            },
+      // we support special element handlers. Register them with jQuery-style 
+      // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+      // There is no support for any other type of selectors 
+      // (class, of compound) at this time.
+      specialElementHandlers = {
+          // element with id of "bypass" - jQuery style selector
+          '#bypassme': function (element, renderer) {
+              // true = "handled elsewhere, bypass text extraction"
+              return true
+          }
+      };
+      margins = {
+          top: 80,
+          bottom: 60,
+          left: 40,
+          width: 522
+      };
+      // all coords and widths are in jsPDF instance's declared units
+      // 'inches' in this case
+      pdf.fromHTML(
+          source, // HTML string or DOM elem ref.
+          margins.left, // x coord
+          margins.top, { // y coord
+              'width': margins.width, // max width of content on PDF
+              'elementHandlers': specialElementHandlers
+          },
 
-            function (dispose) {
-                // dispose: object with X, Y of the last line add to the PDF 
-                //          this allow the insertion of new lines after html
-                pdf.save(smartSheetName+'.pdf');
-            }, margins
-        );
+          function (dispose) {
+              // dispose: object with X, Y of the last line add to the PDF 
+              //          this allow the insertion of new lines after html
+              pdf.save(smartSheetName+'.pdf');
+          }, margins
+      );
     }
-      
+
+    function openPopup() {
+      document.getElementById('popupOverlay').classList.add('active');
+    }
+
+    function closePopup() {
+      document.getElementById('popupOverlay').classList.remove('active');
+    }
+
+    // Close popup when pressing Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') 
+          closePopup();
+    });
+    
   </script>
 </html>

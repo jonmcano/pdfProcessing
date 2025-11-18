@@ -1,0 +1,32 @@
+{
+   "damage_type":"WIND",
+   "next_steps":[
+	{ "section": "Mitigation",
+	  "steps": [
+		"Safety first: Avoid climbing on the roof if unsafe; leave dangerous mitigation to professionals.",
+		"Safely cover exposed areas of the roof or siding with tarps to prevent further water intrusion.",
+		"Only perform temporary/emergency repairs; permanent repairs before adjuster approval can jeopardize coverage.",
+		"Keep damaged materials until the adjuster reviews them.",
+		"Notify your insurance company promptly to avoid delays in claim processing."
+	  ]
+	},
+	{ "section": "Assessment",
+	  "steps": [
+		"We recommend not filing a claim until a professional assessment occurs. Claims Connection Group will help you make the right decision based on your damage and policy.",
+		"You will need to contact a licensed roofing contractor to inspect roof, siding, and gutters.",
+		"If you already have a trusted contractor, you can use them but Claims Connection Group (CCG) provides guaranteed 5-star contractors, reduced claim cycle times, and one point of contact for the entire process. Just click HERE for more information about who CCG is and what we do. If you are ready to start now, you can fill out our online Intake Form and someone from CCG will be in touch shortly."
+	  ]
+	},
+	{ "section": "Documentation",
+	  "steps": [
+		"Take wide and close-up photos/videos of roof, siding, gutter, and window damage.",
+		"Capture images of interior leaks caused by roof breaches.",
+		"Use a camera/phone with time-stamp enabled.",
+		"Save receipts for temporary repairs, tarps, or emergency services.",
+		"Document dates of the storm event and initial damage discovery.",
+		"Keep a log of all communications with insurers and contractors."
+	  ]
+	}	
+   ]
+}
+

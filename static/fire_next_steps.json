@@ -1,0 +1,31 @@
+{
+   "damage_type":"FIRE",
+   "next_steps":[
+	{ "section": "Mitigation",
+	  "steps": [
+		"Do not re-enter the property until cleared safe by authorities.",
+		"Avoid cleaning soot or moving items before adjuster inspection.",
+		"If safe, board up windows or doors to prevent theft or weather damage.",
+		"Only perform temporary measures; do not discard damaged items before documentation."
+	  ]
+	},
+	{ "section": "Assessment",
+	  "steps": [
+		"We recommend not filing a claim until a professional assessment occurs. Claims Connection Group will help you make the right decision based on your damage and policy.",
+		"You will need to contact a licensed fire restoration company or general contractor experienced in fire damage.",
+		"If you already have a trusted contractor, you can use them, but CCG provides guaranteed 5-star contractors, reduced claim cycle times, and one point of contact for the entire process. CCG has contractors whose expertise focuses solely on property fire loss claims."
+	  ]
+	},
+	{ "section": "Documentation",
+	  "steps": [
+		"Take wide and close-up photos/videos of structural damage, soot, and smoke stains.",
+		"Create an itemized list of lost contents with estimated replacement values.",
+		"Save receipts for emergency repairs, temporary lodging, or essential purchases.",
+		"Keep damaged items until after the adjuster inspection.",
+		"Record details of the fire incident and firefighting response.",
+		"Maintain a log of all insurer and contractor communications."
+	  ]
+	}	
+   ]
+}
+

@@ -27,7 +27,6 @@ body {
     float: left;    
 }
 
-
 .page-container {
     display: flex;
     min-height: 100vh;
@@ -454,6 +453,19 @@ button:disabled {
     float: right;
 }
 
+.export-button {
+    width: 20%;
+    float: right;
+    margin-left: 20px;
+}
+
+.next-steps-button {
+    width: 20%;
+    float: right;
+    margin-right: 20px;
+}
+
+
 .progress-container {
     width: 100%;
     background-color: #e0e0e0;
@@ -474,5 +486,113 @@ button:disabled {
     font-weight: bold;
 }
 
+/* Overlay background */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
 
+.popup-overlay.active {
+    display: block;
+}
 
+/* Popup container */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;tr.spaceUnder>td {
+    padding-bottom: 0.5em;
+}
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    z-index: 1000;
+}
+
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Button to open popup */
+.open-popup-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.open-popup-btn:hover {
+    background-color: #0056b3;
+}
+
+.popup-content h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.popup-content p {
+    color: #666;
+    line-height: 1.6;
+}
+
+tr.spaceUnder>td {
+  padding-bottom: 0.5em;
+}
+
+.json-container {
+  font-family: Arial, sans-serif;
+  padding: 15px;
+}
+
+.json-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+
+.json-key {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.json-value {
+  color: #34495e;
+  display: block;
+  line-height: 1.6;
+}
