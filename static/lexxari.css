@@ -23,6 +23,8 @@ body {
     height: 50px;
     width: auto;
     margin-left: 20px;
+    padding-right: 30px;
+    float: left;    
 }
 
 
@@ -449,6 +451,7 @@ button:disabled {
 
 .send-button {
     width: 25%;
+    float: right;
 }
 
 .progress-container {
