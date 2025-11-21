@@ -54,7 +54,7 @@
                                 <label for="fileInput" class="file-input-label">
                                     <div>
                                         <div class="upload-icon">📁</div>
-                                        <div>Click to select a file</div>
+                                        <div>Click or drag file here</div>
                                     </div>
                                 </label>
                             </div>
@@ -89,202 +89,148 @@
               </div>
               <div id="hail-content" class="tab-content">
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Hail</th>
-                              <th>Covered</th>
-                          </tr>
-                      </thead>
-                      <tbody id="hail-covered-table">
+                      <tbody class="section-header" data-target="hail-covered-table">
+                       <tr><th>HAIL</th><th>COVERED</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="hail-covered-table">
+                      </tbody>
+                      
+                  </table>
+                  <table class="qa-table">
+                      <tbody class="section-header" data-target="hail-not-covered-table">
+                        <tr><th>HAIL</th><th>NOT COVERED</tdh></tr>
+                      </tbody>
+                      <tbody class="content-body" id="hail-not-covered-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Hail</th>
-                              <th>Not Covered</th>
-                          </tr>
-                      </thead>
-                      <tbody id="hail-not-covered-table"">
+                      <tbody class="section-header" data-target="hail-deductible-table">
+                       <tr><th>HAIL</th><th>DEDUCTIBLES</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="hail-deductible-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Hail</th>
-                              <th>Deductibles</th>
-                          </tr>
-                      </thead>
-                      <tbody id="hail-deductible-table">
+                      <tbody class="section-header" data-target="hail-amendment-table">
+                        <tr><th>HAIL</th><th>AMENDMENTS</th></tr>
                       </tbody>
-                  </table>
-                  <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Hail</th>
-                              <th>Amendments</th>
-                          </tr>
-                      </thead>
-                      <tbody id="hail-amendment-table">
+                      <tbody class="content-body" id="hail-amendment-table">
                       </tbody>
                   </table>
               </div>
 
               <div id="wind-content" class="tab-content">
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Wind</th>
-                              <th>Covered</th>
-                          </tr>
-                      </thead>
-                      <tbody id="wind-covered-table">
+                      <tbody class="section-header" data-target="wind-covered-table">
+                        <tr><th>WIND</th><th>COVERED</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="wind-covered-table">
+                      </tbody>
+                      
+                  </table>
+                  <table class="qa-table">
+                      <tbody class="section-header" data-target="wind-not-covered-table">
+                        <tr><th>WIND</th><th>NOT COVERED</tdh></tr>
+                      </tbody>
+                      <tbody class="content-body" id="wind-not-covered-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Wind</th>
-                              <th>Not Covered</th>
-                          </tr>
-                      </thead>
-                      <tbody id="wind-not-covered-table">
+                      <tbody class="section-header" data-target="wind-deductible-table">
+                        <tr><th>WIND</th><th>DEDUCTIBLES</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="wind-deductible-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Wind</th>
-                              <th>Deductibles</th>
-                          </tr>
-                      </thead>
-                      <tbody id="wind-deductible-table">
+                      <tbody class="section-header" data-target="wind-amendment-table">
+                        <tr><th>WIND</th><th>AMENDMENTS</th></tr>
                       </tbody>
-                  </table>
-                  <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Wind</th>
-                              <th>Amendments</th>
-                          </tr>
-                      </thead>
-                      <tbody id="wind-amendment-table">
+                      <tbody class="content-body" id="wind-amendment-table">
                       </tbody>
                   </table>
               </div>
               
               <div id="fire-content" class="tab-content">
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Fire</th>
-                              <th>Covered</th>
-                          </tr>
-                      </thead>
-                      <tbody id="fire-covered-table">
+                      <tbody class="section-header" data-target="fire-covered-table">
+                        <tr><th>FIRE</th><th>COVERED</tdh></tr>
+                      </tbody>
+                      <tbody class="content-body" id="fire-covered-table">
+                      </tbody>
+                      
+                  </table>
+                  <table class="qa-table">
+                      <tbody class="section-header" data-target="fire-not-covered-table">
+                        <tr><th>FIRE</th><th>NOT COVERED</tdh></tr>
+                      </tbody>
+                      <tbody class="content-body" id="fire-not-covered-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Fire</th>
-                              <th>Not Covered</th>
-                          </tr>
-                      </thead>
-                      <tbody id="fire-not-covered-table">
+                      <tbody class="section-header" data-target="fire-deductible-table">
+                        <tr><th>FIRE</th><th>DEDUCTIBLES</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="fire-deductible-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Fire</th>
-                              <th>Deductibles</th>
-                          </tr>
-                      </thead>
-                      <tbody id="fire-deductible-table">
+                      <tbody class="section-header" data-target="fire-amendment-table">
+                        <tr><th>FIRE</th><th>AMENDMENTS</th></tr>
                       </tbody>
-                  </table>
-                  <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Fire</th>
-                              <th>Amendments</th>
-                          </tr>
-                      </thead>
-                      <tbody id="fire-amendment-table">
+                      <tbody class="content-body" id="fire-amendment-table">
                       </tbody>
                   </table>
               </div>
               
               <div id="auto-content" class="tab-content">
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Auto</th>
-                              <th>Coverage & Eligibility</th>
-                          </tr>
-                      </thead>
-                      <tbody id="auto-coverage-table">
+                      <tbody class="section-header" data-target="auto-coverage-table">
+                        <tr><th>AUTO</th><th>COVERAGE & ELIGIBILITY</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="auto-coverage-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Auto</th>
-                              <th>Liability Coverage</th>
-                          </tr>
-                      </thead>
-                      <tbody id="auto-liability-table">
+                      <tbody class="section-header" data-target="auto-liability-table">
+                        <tr><th>AUTO</th><th>LIABILITY COVERAGE</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="auto-liability-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Auto</th>
-                              <th>Physical Damage Coverage</th>
-                          </tr>
-                      </thead>
-                      <tbody id="auto-physical-table">
+                      <tbody class="section-header" data-target="auto-physical-table">
+                        <tr><th>AUTO</th><th>PHYSICAL DAMAGE COVERAGE</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="auto-physical-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Auto</th>
-                              <th>UM/UIM Coverage</th>
-                          </tr>next
-                      </thead>
-                      <tbody id="auto-um-table">
+                      <tbody class="section-header" data-target="auto-um-table">
+                        <tr><th>AUTO</th><th>UM/UIM COVERAGE</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="auto-um-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Auto</th>
-                              <th>PIP/MedPay Coverage</th>
-                          </tr>
-                      </thead>
-                      <tbody id="auto-pip-table">
+                      <tbody class="section-header" data-target="auto-pip-table">
+                        <tr><th>AUTO</th><th>PIP/MEDPAY COVERAGE</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="auto-pip-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Auto</th>
-                              <th>Exclusions & Limitations</th>
-                          </tr>
-                      </thead>
-                      <tbody id="auto-exclusions-table">
+                      <tbody class="section-header" data-target="auto-exclusions-table">
+                        <tr><th>AUTO</th><th>EXCLUSIONS & LIMITATIONS</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="auto-exclusions-table">
                       </tbody>
                   </table>
                   <table class="qa-table">
-                      <thead>
-                          <tr>
-                              <th>Auto</th>
-                              <th>General Conditions</th>
-                          </tr>
-                      </thead>
-                      <tbody id="auto-general-table">
+                      <tbody class="section-header" data-target="auto-general-table">
+                        <tr><th>AUTO</th><th>GENERAL CONDITIONS</th></tr>
+                      </tbody>
+                      <tbody class="content-body" id="auto-general-table">
                       </tbody>
                   </table>
               </div>
@@ -340,6 +286,36 @@
     const fileInfo = document.getElementById('fileInfo');
     const successMessage = document.getElementById('successMessage');
     const submitBtn = document.getElementById('submitBtn');
+    const dropZone = document.querySelector('.file-input-label');
+
+    // Drag and drop functionality
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            const file = files[0];
+            const fileSize = (file.size / 1024).toFixed(2);
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `
+                <strong>Selected:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${fileSize} KB<br>
+                <strong>Type:</strong> ${file.type || 'Unknown'}
+            `;
+        }
+    });
 
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -646,6 +622,7 @@
         var currentTable = document.getElementById(tableId);
         var new_tbody = document.createElement('tbody');
         new_tbody.id = tableId;
+        new_tbody.classList.add("content-body");
         
         for (var i = 0; i < arrayLength; i++) {
             var row = document.createElement("tr");
@@ -957,5 +934,11 @@
           closePopup();
     });
     
+    document.querySelectorAll('.section-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const target = document.getElementById(header.dataset.target);
+        target.classList.toggle('hidden');
+      });
+    });
   </script>
 </html>

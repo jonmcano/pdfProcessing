@@ -596,3 +596,48 @@ tr.spaceUnder>td {
   display: block;
   line-height: 1.6;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.section-header {
+  background: #222;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+.section-header:hover {
+  background: #444;
+}
+.section-header td {
+  padding: 14px 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+tbody.content-body {
+  transition: opacity 0.2s;
+}
+tbody.content-body.hidden {
+  display: none;
+}
+tbody.content-body td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+tbody.content-body tr:hover {
+  background: #f9f9f9;
+}
+tbody.content-body tr:last-child td {
+  border-bottom: none;
+}
+
