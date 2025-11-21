@@ -136,7 +136,7 @@ Example format:
         raise HTTPException(status_code=500, detail=f"Error querying LLM: {str(e)}")
 
 @app.post("/api/upload")
-async def upload_file(pdf_file: UploadFile = File(...)):
+async def upload_file(pdf_file: UploadFile = File(...), new_files: bool = True):
     """
     Upload PDF file to act as source for demo
     
@@ -153,6 +153,7 @@ async def upload_file(pdf_file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="No file part in the request")
         
         print("Received Filename:", pdf_file.filename)
+        print("new_files:", new_files)
         
         # Validate PDF file
         if not pdf_file.filename.endswith('.pdf'):
@@ -161,9 +162,24 @@ async def upload_file(pdf_file: UploadFile = File(...)):
         # Read PDF file
         pdf_content = await pdf_file.read()
         
-        # Store the raw file and the contents in case needed later
-        app.state.pdf_file = pdf_file
-        app.state.pdf_content = pdf_content
+        # Extract text from PDF
+        pdf_text = extract_text_from_pdf(pdf_content)
+        
+        if not pdf_text:
+            raise HTTPException(status_code=400, detail="Could not extract text from PDF")
+
+        # If new flag is true; clear app cache
+        if new_files:
+            app.state.pdf_text = ""
+            
+        pdf_app_text = app.state.pdf_text
+        
+        # Could be first time since new instance of app
+        if not pdf_app_text:
+            pdf_app_text = ""
+        
+        # Store the pdf text for later
+        app.state.pdf_text = pdf_app_text + pdf_text
 
         return JSONResponse(content={"msg": f"File '{pdf_file.filename}' uploaded and processed successfully", "success": True})
 
@@ -181,10 +197,10 @@ async def pdf_question_answer(questions: str = File(...)):
     Returns:
     - JSON array of question-answer pairs
     """
-    pdf_content = app.state.pdf_content
+    pdf_text = app.state.pdf_text
     
     # Validate PDF file
-    if not pdf_content:
+    if not pdf_text:
         raise HTTPException(status_code=400, detail="You did not select a policy yet")
     
     # Parse questions JSON
@@ -211,13 +227,7 @@ async def pdf_question_answer(questions: str = File(...)):
     
     if not questions_list:
         raise HTTPException(status_code=400, detail="Questions array cannot be empty")
-    
-    # Extract text from PDF
-    pdf_text = extract_text_from_pdf(pdf_content)
-    
-    if not pdf_text:
-        raise HTTPException(status_code=400, detail="Could not extract text from PDF")
-    
+        
     # Query LLM
     answers = query_llm(pdf_text, questions_list, damage_type)
     

@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label>Select File *</label>
                             <div class="file-input-wrapper">
-                                <input type="file" id="fileInput" name="file" required>
+                                <input type="file" id="fileInput" name="file" required multiple>
                                 <label for="fileInput" class="file-input-label">
                                     <div>
                                         <div class="upload-icon">📁</div>
@@ -304,31 +304,33 @@
         dropZone.classList.remove('drag-over');
         
         const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files;
-            const file = files[0];
-            const fileSize = (file.size / 1024).toFixed(2);
-            fileInfo.style.display = 'block';
-            fileInfo.innerHTML = `
-                <strong>Selected:</strong> ${file.name}<br>
-                <strong>Size:</strong> ${fileSize} KB<br>
-                <strong>Type:</strong> ${file.type || 'Unknown'}
-            `;
-        }
+        fileInput.files = files;
+        displayFileDetails(files);
     });
 
     fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const fileSize = (file.size / 1024).toFixed(2);
-            fileInfo.style.display = 'block';
-            fileInfo.innerHTML = `
-                <strong>Selected:</strong> ${file.name}<br>
-                <strong>Size:</strong> ${fileSize} KB<br>
-                <strong>Type:</strong> ${file.type || 'Unknown'}
-            `;
-        }
+        displayFileDetails(fileInput.files)
     });
+    
+    function displayFileDetails(files) {
+      const arrayLength = files.length
+      if (arrayLength > 0) {
+        fileInfo.innerHTML = "";
+        fileInfo.style.display = 'block';
+         for (var i = 0; i < arrayLength; i++) {
+          var file = files[i];
+          var fileSize = (file.size / 1024).toFixed(2);
+          var fileDetails = document.createElement('div');
+          fileDetails.setAttribute("style", "padding-bottom: 10px;");
+          fileDetails.innerHTML = `
+              <strong>Selected:</strong> ${file.name}<br>
+              <strong>Size:</strong> ${fileSize} KB<br>
+              <strong>Type:</strong> ${file.type || 'Unknown'}
+          `;
+          fileInfo.appendChild(fileDetails);
+        }
+      }    
+    }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -337,19 +339,15 @@
         const wind = document.getElementById('wind').checked;
         const fire = document.getElementById('fire').checked;
         const auto = isAuto();
-        const file = fileInput.files[0];
         
-        var url = window.location.href;
-        var lastPart = url.substr(url.lastIndexOf('/') + 1);
-
+        var fileCount = fileInput.files.length;
+        var file = fileInput.files[0];
+        
         if (!file) {
             alert('Please select a file');
             return;
         }
         
-        var url = window.location.href;
-        var lastPart = url.substr(url.lastIndexOf('/') + 1);
-
         var progress_step = 80;
         var step_divide = 0;
         if (!auto) {
@@ -376,107 +374,116 @@
         // Here you would normally send the data to a server
         // For demonstration, we'll just simulate a delay
         setTimeout(() => {
-            successMessage.style.display = 'block';
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Upload Policy';
+          successMessage.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Upload Policy';
             
           setProgress(20);
 
-          const form = new FormData();
-            form.append('pdf_file', file);
+          if (fileCount > 0) {
+            var new_files = "true";
+            for (var i = 0; i < fileCount; i++) {
+              var form = new FormData();
+              form.append('pdf_file', fileInput.files[i]);
+              if (i > 0)
+                new_files = "false";
+              (async () => {
+                var rawResponse = await fetch('/api/upload?new_files='+new_files, {
+                  method: 'POST',
+                  headers: {
+                    'accept': 'application/json'
+                  },
+                  body: form
+                });
 
-          (async () => {
-            const rawResponse = await fetch('/api/upload', {
-              method: 'POST',
-              headers: {
-                'accept': 'application/json'
-              },
-              body: form
-            });
-            
-            const upload_response = await rawResponse.json();
-            if (upload_response) {
-              //  Show chat
-              document.getElementById('demo_chat').style.display = 'block';
-              
-              fetch("policy_details.json")
-                .then(response => response.json())
-                .then(json => loadPolicyDetails(json));
-              
-            
-              if (hail) {              
-                fetch("hail_covered.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("covered",json, progress_step/4));
-                fetch("hail_not_covered.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("not-covered",json, progress_step/4));
-                fetch("hail_deductible.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("deductible",json, progress_step/4));
-                fetch("hail_amendment.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("amendment",json, progress_step/4));
-              }
+                var upload_response = await rawResponse.json();
+                console.log(upload_response);
+                if (i == fileCount) {
+                  if (upload_response) {
+                    //  Show chat
+                    document.getElementById('demo_chat').style.display = 'block';
+                    
+                    fetch("policy_details.json")
+                      .then(response => response.json())
+                      .then(json => loadPolicyDetails(json));
+                    
+                  
+                    if (hail) {              
+                      fetch("hail_covered.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("covered",json, progress_step/4));
+                      fetch("hail_not_covered.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("not-covered",json, progress_step/4));
+                      fetch("hail_deductible.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("deductible",json, progress_step/4));
+                      fetch("hail_amendment.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("amendment",json, progress_step/4));
+                    }
 
-              if (wind) {              
-                fetch("wind_covered.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("covered",json, progress_step/4));
-                fetch("wind_not_covered.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("not-covered",json, progress_step/4));
-                fetch("wind_deductible.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("deductible",json, progress_step/4));
-                fetch("wind_amendment.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("amendment",json, progress_step/4));
-              }
+                    if (wind) {              
+                      fetch("wind_covered.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("covered",json, progress_step/4));
+                      fetch("wind_not_covered.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("not-covered",json, progress_step/4));
+                      fetch("wind_deductible.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("deductible",json, progress_step/4));
+                      fetch("wind_amendment.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("amendment",json, progress_step/4));
+                    }
 
-              if (fire) {              
-                fetch("fire_covered.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("covered",json, progress_step/4));
-                fetch("fire_not_covered.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("not-covered",json, progress_step/4));
-                fetch("fire_deductible.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("deductible",json, progress_step/4));
-                fetch("fire_amendment.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("amendment",json, progress_step/4));
-              }
+                    if (fire) {              
+                      fetch("fire_covered.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("covered",json, progress_step/4));
+                      fetch("fire_not_covered.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("not-covered",json, progress_step/4));
+                      fetch("fire_deductible.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("deductible",json, progress_step/4));
+                      fetch("fire_amendment.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("amendment",json, progress_step/4));
+                    }
 
-              if (auto) {              
-                fetch("auto_coverage.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("coverage",json, progress_step/7));
-                fetch("auto_liability.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("liability",json, progress_step/7));
-                fetch("auto_physical.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("physical",json, progress_step/7));
-                fetch("auto_UM.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("um",json, progress_step/7));
-                fetch("auto_PIP.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("pip",json, progress_step/7));
-                fetch("auto_exclusions.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("exclusions",json, progress_step/7));
-                fetch("auto_general.json")
-                  .then(response => response.json())
-                  .then(json => loadSmartSheet("general",json, progress_step/7));
-              }
+                    if (auto) {              
+                      fetch("auto_coverage.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("coverage",json, progress_step/7));
+                      fetch("auto_liability.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("liability",json, progress_step/7));
+                      fetch("auto_physical.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("physical",json, progress_step/7));
+                      fetch("auto_UM.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("um",json, progress_step/7));
+                      fetch("auto_PIP.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("pip",json, progress_step/7));
+                      fetch("auto_exclusions.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("exclusions",json, progress_step/7));
+                      fetch("auto_general.json")
+                        .then(response => response.json())
+                        .then(json => loadSmartSheet("general",json, progress_step/7));
+                    }
+                  }    
+                }
+              })();
             }
-          })();
+          }
         }, 1500);
     });
-
+    
     // Tab functionality
     const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -635,14 +642,7 @@
             var columnA = document.createElement("td");
             columnA.classList.add("answer-cell");
             if (isJson(answers[i].answer)) {
-              var currentAnswer = JSON.parse(answers[i].answer);
-              var divA = document.createElement("div");
-              if (Array.isArray(currentAnswer)) {
-                jsonArrayToHTMLList(currentAnswer, divA);
-              } else {
-                jsonObjectToHtml(currentAnswer, divA);
-              }
-                columnA.appendChild(divA);
+              columnA.appendChild(convertJsonToHtmlDiv(JSON.parse(answers[i].answer)));
             } else {
               columnA.textContent = answers[i].answer;
             }
@@ -661,6 +661,16 @@
       })();
     }
     
+    function convertJsonToHtmlDiv(jsonObject) {
+      var divA = document.createElement("div");
+      if (Array.isArray(jsonObject)) {
+        jsonArrayToHTMLList(jsonObject, divA);
+      } else {
+        jsonObjectToHtml(jsonObject, divA);
+      }
+      return divA;
+    }
+    
     function isJson(str) {
       try {
           JSON.parse(str);
@@ -677,10 +687,19 @@
       for (const [key, value] of Object.entries(jsonObj)) {
         var jsonItemDiv = document.createElement("div");
         jsonItemDiv.classList.add("json-item");
-        jsonItemDiv.innerHTML = `
-            <strong class="json-key">${escapeHtml(key)}:</strong>
-            <span class="json-value">${escapeHtml(value)}</span>
-        `;
+        if (Array.isArray(value) || typeof value === 'object') {
+          jsonItemDiv.innerHTML = `
+              <strong class="json-key">${escapeHtml(key)}:</strong>
+          `;
+          var jsonDiv = convertJsonToHtmlDiv(value);
+          jsonDiv.classList.add("json-value");
+          jsonItemDiv.appendChild(jsonDiv);
+        } else {
+          jsonItemDiv.innerHTML = `
+              <strong class="json-key">${escapeHtml(key)}:</strong>
+              <span class="json-value">${escapeHtml(value)}</span>
+          `;
+        }
         jsonParentDiv.appendChild(jsonItemDiv);
       }
       
