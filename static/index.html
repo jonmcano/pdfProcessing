@@ -587,7 +587,11 @@
       const form = new FormData();
       form.append('questions', JSON.stringify(json));
       (async () => {
-        var rawResponse = await fetch('/api/pdf-qa', {
+        var auto_flag = "False";
+        if (isAuto())
+          auto_flag = "True";
+          
+        var rawResponse = await fetch('/api/pdf-qa?auto='+auto_flag, {
           method: 'POST',
           headers: {
             'accept': 'application/json'
@@ -613,7 +617,11 @@
         form.append('questions', JSON.stringify(json));
 
       (async () => {
-        const rawResponse = await fetch('/api/pdf-qa', {
+        var auto_flag = "False";
+        if (isAuto())
+          auto_flag = "True";
+          
+        const rawResponse = await fetch('/api/pdf-qa?auto='+auto_flag, {
           method: 'POST',
           headers: {
             'accept': 'application/json'
@@ -783,8 +791,11 @@
       chatForm.append('questions', JSON.stringify(chatQuestions));
 
       messageInput.value = '';
+      var auto_flag = "False";
+      if (isAuto())
+        auto_flag = "True";
       
-      fetch('/api/pdf-qa', {
+      fetch('/api/pdf-qa?auto='+auto_flag, {
         method: 'POST',
         headers: { 'accept': 'application/json' },
         body: chatForm

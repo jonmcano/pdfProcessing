@@ -22,18 +22,25 @@ WATSONX_URL = os.getenv("WATSONX_URL")
 WATSONX_APIKEY = os.getenv("WATSONX_APIKEY")
 WATSONX_PROJECT_ID = os.getenv("WATSONX_PROJECT_ID")
 MODEL_ID = "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"
+WATSONX_AUTO_PROJECT_ID = os.getenv("WATSONX_PROJECT_ID")
+
+if os.getenv("WATSONX_AUTO_PROJECT_ID") is not None:
+    WATSONX_AUTO_PROJECT_ID = os.getenv("WATSONX_AUTO_PROJECT_ID")
 
 if os.getenv("MODEL_ID") is not None:
     MODEL_ID = os.getenv("MODEL_ID")
 
-def init_model():
+def init_model(auto: Optional[bool] = False):
     credentials = Credentials(api_key=WATSONX_APIKEY, url=WATSONX_URL)
     params = {"temperature": 0.0}
+    project_id = WATSONX_PROJECT_ID
+    if auto:
+      project_id = WATSONX_AUTO_PROJECT_ID
     return ModelInference(
         model_id=MODEL_ID,
         params=params,
         credentials=credentials,
-        project_id=WATSONX_PROJECT_ID
+        project_id=project_id
     )
 
 
@@ -63,7 +70,7 @@ def extract_text_from_pdf(pdf_file: bytes) -> str:
         raise HTTPException(status_code=400, detail=f"Error extracting PDF text: {str(e)}")
 
 
-def query_llm(pdf_text: str, questions: List[str], damage_type: Optional[str] = None) -> List[Answer]:
+def query_llm(pdf_text: str, questions: List[str], damage_type: Optional[str] = None, auto: Optional[bool] = False) -> List[Answer]:
     """Query Watson LLM with PDF context and questions."""
     
     # Construct the prompt
@@ -98,7 +105,7 @@ Example format:
         }]
         
         # Query the model
-        model = init_model()
+        model = init_model(auto)
         response_text = model.chat(messages=messages)
         
         if not response_text or "choices" not in response_text or not response_text["choices"]:
@@ -187,7 +194,7 @@ async def upload_file(pdf_file: UploadFile = File(...), new_files: bool = True):
         raise HTTPException(status_code=500, detail=f"File upload failed. Error: {str(e)}")        
 
 @app.post("/api/pdf-qa", response_model=List[Answer])
-async def pdf_question_answer(questions: str = File(...)):
+async def pdf_question_answer(questions: str = File(...), auto: bool = False):
     """
     Upload questions to get answers.
     
@@ -229,7 +236,7 @@ async def pdf_question_answer(questions: str = File(...)):
         raise HTTPException(status_code=400, detail="Questions array cannot be empty")
         
     # Query LLM
-    answers = query_llm(pdf_text, questions_list, damage_type)
+    answers = query_llm(pdf_text, questions_list, damage_type, auto)
     
     return answers
 
